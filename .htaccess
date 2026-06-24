@@ -1,0 +1,26 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Increase upload limits for large video files
+php_value upload_max_filesize 500M
+php_value post_max_size 500M
+php_value max_execution_time 600
+php_value max_input_time 600
+php_value memory_limit 512M
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(ico|jpg|jpeg|png|gif|css|svg|woff2|webp|ttf)$">
+        Header set Cache-Control "max-age=31536000, public"
+    </FilesMatch>
+    <FilesMatch "\.(html|htm)$">
+        Header set Cache-Control "max-age=7200, private, must-revalidate"
+    </FilesMatch>
+    <FilesMatch "\.(pdf)$">
+        Header set Cache-Control "max-age=2678400, public"
+    </FilesMatch>
+    <FilesMatch "\.js$">
+        Header set Cache-Control "max-age=31536000, private"
+    </FilesMatch>
+</IfModule>
