@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', __('ui.student_portal')) - LinhTrang School</title>
+    <title>@yield('title', __('ui.student_portal')) - LTEdu</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&subset=vietnamese&display=swap" rel="stylesheet">
@@ -69,7 +69,7 @@
 <body>
 
 <div class="s-topbar">
-    <a href="/" class="brand"><span class="logo-pill">&#x1F4DA;</span>LinhTrang</a>
+    <a href="/" class="brand"><span class="logo-pill">&#x1F4DA;</span>LTEdu</a>
     @if(session('student_id'))
         @php $__topStudent = \App\Models\Student::find(session('student_id')); @endphp
         <div class="d-flex align-items-center gap-2">
@@ -77,9 +77,6 @@
                 <a href="{{ route('language.switch', 'en') }}" class="{{ app()->getLocale() === 'en' ? 'active' : '' }}">EN</a>
                 <a href="{{ route('language.switch', 'vi') }}" class="{{ app()->getLocale() === 'vi' ? 'active' : '' }}">VI</a>
             </div>
-            <a href="{{ route('guide') }}" style="color:#fff;font-size:.78rem;font-weight:800;text-decoration:none;background:rgba(255,255,255,.2);padding:6px 10px;border-radius:10px;">
-                <i class="bi bi-question-circle"></i> {{ __('ui.guide.menu') }}
-            </a>
             <div class="s-avatar">{{ mb_substr($__topStudent->full_name ?? 'U', 0, 1) }}</div>
             <div style="color:#fff;line-height:1.2">
                 <div style="font-size:.7rem;opacity:.8">{{ __('ui.hello') }} &#x1F44B;</div>
@@ -131,6 +128,11 @@
         <i class="bi bi-house-heart-fill"></i>
         {{ __('ui.home') }}
         @if(request()->is('/')) <span class="s-nav-pip"></span> @endif
+    </a>
+    <a href="{{ route('guide') }}" class="{{ request()->is('huong-dan') ? 'active' : '' }}">
+        <i class="bi bi-question-circle-fill"></i>
+        {{ __('ui.guide.menu') }}
+        @if(request()->is('huong-dan')) <span class="s-nav-pip"></span> @endif
     </a>
     @if($__navStudent)
         @foreach($__navStudent->classes->take(3) as $__navClass)

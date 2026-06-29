@@ -167,7 +167,7 @@ return [
         'title' => 'User guide',
         'back_to_dashboard' => 'Back to overview',
         'badge' => 'Help center',
-        'heading' => 'LinhTrang user guide',
+        'heading' => 'LTEdu user guide',
         'intro' => 'Choose the right tab below to quickly view instructions for students or admins.',
         'student_tab' => 'Student',
         'admin_tab' => 'Admin',

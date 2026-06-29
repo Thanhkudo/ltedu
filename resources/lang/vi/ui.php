@@ -167,7 +167,7 @@ return [
         'title' => 'Hướng dẫn sử dụng',
         'back_to_dashboard' => 'Về tổng quan',
         'badge' => 'Trung tâm hướng dẫn',
-        'heading' => 'Hướng dẫn sử dụng LinhTrang',
+        'heading' => 'Hướng dẫn sử dụng LTEdu',
         'intro' => 'Chọn đúng tab bên dưới để xem nhanh các bước thao tác dành cho học viên hoặc admin.',
         'student_tab' => 'Học viên',
         'admin_tab' => 'Admin',

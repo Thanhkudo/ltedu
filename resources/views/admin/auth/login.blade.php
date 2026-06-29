@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ __('ui.admin_login') }} - LinhTrang</title>
+    <title>{{ __('ui.admin_login') }} - LTEdu</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&subset=vietnamese&display=swap" rel="stylesheet">
@@ -18,7 +18,7 @@
 <div class="container" style="max-width: 980px;">
     <div class="row g-0 auth-card bg-white">
         <div class="col-md-5 auth-left p-4 p-md-5 d-flex flex-column justify-content-between">
-            <div><h4 class="fw-bold mb-3">LinhTrang Admin</h4><p class="mb-0 opacity-75">{{ __('ui.admin_login_intro') }}</p></div>
+            <div><h4 class="fw-bold mb-3">LTEdu Admin</h4><p class="mb-0 opacity-75">{{ __('ui.admin_login_intro') }}</p></div>
             <small class="opacity-75">{{ __('ui.admin_only') }}</small>
         </div>
         <div class="col-md-7 p-4 p-md-5">

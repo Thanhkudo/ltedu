@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', __('ui.admin')) - LinhTrang Admin</title>
+    <title>@yield('title', __('ui.admin')) - LTEdu Admin</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&subset=vietnamese&display=swap" rel="stylesheet">
@@ -165,7 +165,7 @@
     @endphp
     {{-- Sidebar --}}
     <div class="admin-sidebar">
-        <div class="brand"><i class="bi bi-shield-check me-2"></i>LinhTrang Admin</div>
+        <div class="brand"><i class="bi bi-shield-check me-2"></i>LTEdu Admin</div>
         <nav class="nav flex-column mt-2">
             <span class="nav-section">{{ __('ui.overview') }}</span>
             @if (in_array('dashboard', $allowed))
