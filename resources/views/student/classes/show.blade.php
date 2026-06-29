@@ -263,52 +263,45 @@
     });
 @endphp
 
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb" style="margin-bottom:0;">
-        <li class="breadcrumb-item"><a href="/" style="text-decoration:none;">Dashboard</a></li>
-        <li class="breadcrumb-item active">{{ $class->name }}</li>
-    </ol>
-</nav>
-
 <section class="class-hero slide-up mb-4">
     <div class="class-hero-badge">
         <i class="bi bi-stars"></i>
-        Khu vuc hoc tap cua ban
+        {{ __('ui.learning_area') }}
     </div>
 
     <div class="mt-3 d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3">
         <div>
             <h2 class="mb-2" style="font-size:1.75rem;font-weight:900;line-height:1.15;">{{ $class->name }}</h2>
             <div style="font-size:.95rem;opacity:.92;max-width:560px;">
-                Giao vien: <strong>{{ $class->teacher->name ?? '—' }}</strong>
+                {{ __('ui.teacher') }}: <strong>{{ $class->teacher->name ?? '-' }}</strong>
                 <span class="mx-2">|</span>
-                {{ $class->start_date->format('d/m/Y') }} - {{ $class->end_date ? $class->end_date->format('d/m/Y') : 'Chua xac dinh' }}
+                {{ $class->start_date->format('d/m/Y') }} - {{ $class->end_date ? $class->end_date->format('d/m/Y') : __('ui.end_date_unknown') }}
             </div>
         </div>
 
         <span class="s-tag {{ $class->status === 'active' ? 'tag-green' : 'tag-purple' }}" style="font-size:.82rem;">
-            {{ $class->status === 'active' ? 'Dang hoc' : ucfirst($class->status) }}
+            {{ $class->status === 'active' ? __('ui.active') : ucfirst($class->status) }}
         </span>
     </div>
 
     <div class="class-overview-grid">
         <div class="class-overview-card">
             <div class="class-overview-value">{{ $sessionsCount }}</div>
-            <div class="class-overview-label">Buoi hoc</div>
+            <div class="class-overview-label">{{ __('ui.sessions') }}</div>
         </div>
         <div class="class-overview-card">
             <div class="class-overview-value">{{ $assignmentsCount }}</div>
-            <div class="class-overview-label">Bai tap duoc giao</div>
+            <div class="class-overview-label">{{ __('ui.assigned_work') }}</div>
         </div>
         <div class="class-overview-card">
             <div class="class-overview-value">{{ $submittedCount }}</div>
-            <div class="class-overview-label">Bai da nop</div>
+            <div class="class-overview-label">{{ __('ui.submitted_work') }}</div>
         </div>
     </div>
 </section>
 
 <div class="class-page-shell">
-    <div class="s-section-title mb-3">Lich hoc va bai tap</div>
+    <div class="s-section-title mb-3">{{ __('ui.class_schedule') }}</div>
 
     <div class="session-timeline">
         @forelse($class->sessions as $session)
@@ -317,7 +310,7 @@
                     <div>
                         <div class="session-kicker">
                             <i class="bi bi-calendar2-week"></i>
-                            Buoi {{ $session->session_number }}
+                            {{ __('ui.session_number', ['number' => $session->session_number]) }}
                         </div>
                         <div class="session-title">{{ $session->title }}</div>
                         <div class="session-meta">
@@ -326,7 +319,7 @@
                     </div>
 
                     <span class="session-status {{ $session->status }}">
-                        {{ ['scheduled' => 'Sap hoc', 'completed' => 'Da hoc', 'cancelled' => 'Da huy'][$session->status] ?? $session->status }}
+                        {{ ['scheduled' => __('ui.scheduled'), 'completed' => __('ui.completed'), 'cancelled' => __('ui.cancelled')][$session->status] ?? $session->status }}
                     </span>
                 </div>
 
@@ -339,17 +332,17 @@
                                     ->sortByDesc('submitted_at')
                                     ->first();
                                 $statusClass = 'todo';
-                                $statusLabel = 'Chua nop';
+                                $statusLabel = __('ui.not_submitted');
 
                                 if (!$submission && $assignment->isPastDue()) {
                                     $statusClass = 'late';
-                                    $statusLabel = 'Qua han';
+                                    $statusLabel = __('ui.overdue');
                                 } elseif ($submission && $submission->status === 'graded') {
                                     $statusClass = 'graded';
-                                    $statusLabel = 'Da cham: ' . $submission->score . '/' . $assignment->max_score;
+                                    $statusLabel = __('ui.graded', ['score' => $submission->score, 'max' => $assignment->max_score]);
                                 } elseif ($submission) {
                                     $statusClass = 'done';
-                                    $statusLabel = 'Da nop';
+                                    $statusLabel = __('ui.submitted');
                                 }
                             @endphp
 
@@ -357,10 +350,10 @@
                                 <div class="assignment-top">
                                     <div>
                                         <div class="assignment-title">{{ $assignment->exercise->title }}</div>
-                                        <div class="assignment-meta">Bai tap cho buoi {{ $session->session_number }}</div>
+                                        <div class="assignment-meta">{{ __('ui.assignment_for_session', ['number' => $session->session_number]) }}</div>
                                     </div>
-                                    <a href="/assignments/{{ $assignment->id }}" class="btn-app btn-purple" style="padding:8px 16px;font-size:.8rem;">
-                                        {{ $submission ? 'Xem bai' : 'Lam bai' }}
+                                    <a href="{{ $submission ? route('student.assignments.show', $assignment->id) : route('student.assignments.practice', $assignment->id) }}" class="btn-app btn-purple" style="padding:8px 16px;font-size:.8rem;">
+                                        {{ $submission ? __('ui.view_assignment') : __('ui.do_assignment') }}
                                     </a>
                                 </div>
 
@@ -371,7 +364,7 @@
                                     </span>
                                     <span class="assignment-chip chip-deadline">
                                         <i class="bi bi-hourglass-split"></i>
-                                        Han: {{ $assignment->due_date->format('d/m/Y H:i') }}
+                                        {{ __('ui.deadline') }}: {{ $assignment->due_date ? $assignment->due_date->format('d/m/Y H:i') : __('ui.no_deadline') }}
                                     </span>
                                     <span class="assignment-chip chip-status {{ $statusClass }}">
                                         <i class="bi bi-check2-circle"></i>
@@ -381,9 +374,9 @@
 
                                 <div class="assignment-foot">
                                     <div class="assignment-meta">
-                                        {{ $assignment->isPastDue() && !$submission ? 'Can uu tien hoan thanh som.' : 'Nhan vao de xem chi tiet va nop bai.' }}
+                                        {{ $assignment->isPastDue() && !$submission ? __('ui.finish_soon') : __('ui.view_and_submit') }}
                                     </div>
-                                    <div style="font-size:.82rem;font-weight:900;color:#2563eb;">Mo bai tap <i class="bi bi-arrow-right-short"></i></div>
+                                    <div style="font-size:.82rem;font-weight:900;color:#2563eb;">{{ __('ui.open_assignment_link') }} <i class="bi bi-arrow-right-short"></i></div>
                                 </div>
                             </article>
                         @endforeach
@@ -391,16 +384,16 @@
                 @else
                     <div class="empty-block">
                         <div class="icon"><i class="bi bi-journal-text"></i></div>
-                        <div class="fw-bold mb-1">Buoi nay chua co bai tap</div>
-                        <div class="small">Noi dung bai tap se xuat hien tai day khi giao vien giao bai.</div>
+                        <div class="fw-bold mb-1">{{ __('ui.no_session_assignment') }}</div>
+                        <div class="small">{{ __('ui.no_session_assignment_hint') }}</div>
                     </div>
                 @endif
             </section>
         @empty
             <div class="empty-block">
                 <div class="icon"><i class="bi bi-calendar-x"></i></div>
-                <div class="fw-bold mb-1">Lop hoc chua co lich hoc</div>
-                <div class="small">Khi co buoi hoc moi, thong tin se duoc hien tai trang nay.</div>
+                <div class="fw-bold mb-1">{{ __('ui.no_schedule') }}</div>
+                <div class="small">{{ __('ui.no_schedule_hint') }}</div>
             </div>
         @endforelse
     </div>

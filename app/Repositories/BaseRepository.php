@@ -6,8 +6,8 @@ use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Base Repository - triển khai CRUD chung dùng cho tất cả domain.
- * Các Repository cụ thể extend class này và override nếu cần.
+ * Base Repository - trien khai CRUD chung dung cho tat ca domain.
+ * Cac Repository cu the extend class nay va override neu can.
  */
 abstract class BaseRepository implements RepositoryInterface
 {

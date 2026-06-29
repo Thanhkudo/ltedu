@@ -165,6 +165,7 @@ return [
         /*
          * Package Service Providers...
          */
+        CKSource\CKFinderBridge\CKFinderServiceProvider::class,
 
         /*
          * Application Service Providers...

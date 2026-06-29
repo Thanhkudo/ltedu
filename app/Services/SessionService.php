@@ -22,7 +22,7 @@ class SessionService
 
     public function createSession(array $data): ClassSession
     {
-        // Tự tăng session_number nếu không truyền
+        // Tu tang session_number neu khong truyen
         if (empty($data['session_number'])) {
             $lastSession = ClassSession::where('class_id', $data['class_id'])->max('session_number');
             $data['session_number'] = ($lastSession ?? 0) + 1;

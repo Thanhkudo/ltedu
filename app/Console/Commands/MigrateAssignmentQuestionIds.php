@@ -32,11 +32,11 @@ class MigrateAssignmentQuestionIds extends Command
             ->filter(fn ($a) => empty($a->generation_config['question_ids']));
 
         if ($assignments->isEmpty()) {
-            $this->info('Không có assignment nào cần migrate.');
+            $this->info('Khong co assignment nao can migrate.');
             return 0;
         }
 
-        $this->info("Tìm thấy {$assignments->count()} assignment cần migrate." . ($isDry ? ' (dry-run)' : ''));
+        $this->info("Tim thay {$assignments->count()} assignment can migrate." . ($isDry ? ' (dry-run)' : ''));
 
         $ok = 0;
         $fail = 0;
@@ -44,27 +44,26 @@ class MigrateAssignmentQuestionIds extends Command
         foreach ($assignments as $assignment) {
             $config = $assignment->generation_config;
             $gradeLevel = $config['grade_level'] ?? null;
-            $skillType  = $config['skill_type']  ?? null;
             $rows       = $config['question_configs'] ?? [];
 
-            if (!$gradeLevel || !$skillType || empty($rows)) {
-                $this->warn("  [SKIP] Assignment #{$assignment->id} — thiếu grade_level/skill_type/question_configs");
+            if (!$gradeLevel || empty($rows)) {
+                $this->warn("  [SKIP] Assignment #{$assignment->id} - thieu grade_level/question_configs");
                 $fail++;
                 continue;
             }
 
             try {
-                $questions = $this->qgs->pickRandomQuestions($rows, (int) $gradeLevel, (string) $skillType);
+                $questions = $this->qgs->pickRandomQuestions($rows, (int) $gradeLevel);
 
                 if ($questions->isEmpty()) {
-                    $this->warn("  [SKIP] Assignment #{$assignment->id} — không tìm thấy câu hỏi phù hợp");
+                    $this->warn("  [SKIP] Assignment #{$assignment->id} - khong tim thay cau hoi phu hop");
                     $fail++;
                     continue;
                 }
 
                 $ids = $questions->pluck('id')->values()->all();
 
-                $this->line("  [OK]   Assignment #{$assignment->id} — " . count($ids) . " câu hỏi: [" . implode(', ', $ids) . "]");
+                $this->line("  [OK]   Assignment #{$assignment->id} - " . count($ids) . " cau hoi: [" . implode(', ', $ids) . "]");
 
                 if (!$isDry) {
                     $newConfig = array_merge($config, ['question_ids' => $ids]);
@@ -76,13 +75,13 @@ class MigrateAssignmentQuestionIds extends Command
 
                 $ok++;
             } catch (\Throwable $e) {
-                $this->error("  [FAIL] Assignment #{$assignment->id} — " . $e->getMessage());
+                $this->error("  [FAIL] Assignment #{$assignment->id} - " . $e->getMessage());
                 $fail++;
             }
         }
 
         $this->newLine();
-        $this->info("Hoàn thành: {$ok} thành công, {$fail} bỏ qua/lỗi.");
+        $this->info("Hoan thanh: {$ok} thanh cong, {$fail} bo qua/loi.");
 
         return 0;
     }

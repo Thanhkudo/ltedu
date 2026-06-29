@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 @section('title', 'Quản lý học viên')
 @section('page-title', 'Quản lý học viên')
 @section('page-actions')
@@ -12,7 +12,7 @@
     <div class="card-header bg-white">
         <form method="GET" class="d-flex gap-2">
             <input type="text" name="search" class="form-control form-control-sm" style="max-width:280px"
-                   placeholder="Tìm kiếm tên, email, mã HV..." value="{{ request('search') }}">
+                   placeholder="Tim kiem ten, email, ma HV..." value="{{ request('search') }}">
             <button type="submit" class="btn btn-sm btn-outline-secondary">
                 <i class="bi bi-search"></i>
             </button>
@@ -27,7 +27,7 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
                 <tr>
-                    <th>Mã HV</th><th>Họ tên</th><th>Email</th><th>Số điện thoại</th><th>Lớp</th><th></th>
+                    <th>Ma HV</th><th>Ho ten</th><th>Email</th><th>So dien thoai</th><th>Lop</th><th></th>
                 </tr>
             </thead>
             <tbody>
@@ -36,14 +36,14 @@
                         <td><span class="badge bg-light text-dark">{{ $student->student_code }}</span></td>
                         <td class="fw-semibold">{{ $student->full_name }}</td>
                         <td>{{ $student->email }}</td>
-                        <td>{{ $student->phone ?? '—' }}</td>
-                        <td>{{ $student->classes_count ?? '—' }}</td>
+                        <td>{{ $student->phone ?? '-' }}</td>
+                        <td>{{ $student->classes_count ?? '-' }}</td>
                         <td class="text-end">
                             <a href="/admin/students/{{ $student->id }}/edit" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-pencil"></i>
                             </a>
                             <form method="POST" action="/admin/students/{{ $student->id }}" class="d-inline"
-                                  onsubmit="return confirm('Xoá học viên này?')">
+                                  onsubmit="return confirm('Xóa học viên này?')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                             </form>
@@ -60,3 +60,4 @@
     @endif
 </div>
 @endsection
+

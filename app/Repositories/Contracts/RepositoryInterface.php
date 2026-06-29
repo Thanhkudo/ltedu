@@ -3,8 +3,8 @@
 namespace App\Repositories\Contracts;
 
 /**
- * Base interface chung cho tất cả Repositories.
- * Định nghĩa các thao tác CRUD cơ bản.
+ * Base interface chung cho tat ca Repositories.
+ * Dinh nghia cac thao tac CRUD co ban.
  */
 interface RepositoryInterface
 {

@@ -32,7 +32,7 @@ class StudentService
 
     public function createStudent(array $data): Student
     {
-        // Tự sinh mã học viên nếu không truyền vào
+        // Tu sinh ma hoc vien neu khong truyen vao
         if (empty($data['student_code'])) {
             $data['student_code'] = $this->generateStudentCode();
         }
@@ -56,7 +56,7 @@ class StudentService
         return $this->studentRepo->getByClass($classId, ['user']);
     }
 
-    // ─── Private helpers ───────────────────────────────────────
+    //  Private helpers 
     private function generateStudentCode(): string
     {
         $latest = Student::orderBy('id', 'desc')->first();

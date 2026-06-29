@@ -32,7 +32,7 @@ class StudentController extends Controller
     {
         $this->studentService->createStudent($request->validated());
         return redirect()->route('admin.students.index')
-            ->with('success', 'Tạo học viên thành công!');
+            ->with('success', 'Tao hoc vien thanh cong!');
     }
 
     public function edit(int $id)
@@ -45,13 +45,13 @@ class StudentController extends Controller
     {
         $this->studentService->updateStudent($id, $request->validated());
         return redirect()->route('admin.students.index')
-            ->with('success', 'Cập nhật học viên thành công!');
+            ->with('success', 'Cap nhat hoc vien thanh cong!');
     }
 
     public function destroy(int $id)
     {
         $this->studentService->deleteStudent($id);
         return redirect()->route('admin.students.index')
-            ->with('success', 'Xoá học viên thành công!');
+            ->with('success', 'Xoa hoc vien thanh cong!');
     }
 }

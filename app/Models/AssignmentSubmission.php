@@ -10,16 +10,17 @@ class AssignmentSubmission extends Model
     use HasFactory;
 
     protected $fillable = [
-        'assignment_id', 'student_id', 'content',
+        'assignment_id', 'student_id', 'content', 'json_params',
         'file_path', 'score', 'feedback', 'status', 'submitted_at',
     ];
 
     protected $casts = [
         'submitted_at' => 'datetime',
         'score'        => 'float',
+        'json_params'  => 'array',
     ];
 
-    // ─── Relations ─────────────────────────────────────────────
+    //  Relations 
     public function assignment()
     {
         return $this->belongsTo(Assignment::class);
@@ -30,7 +31,7 @@ class AssignmentSubmission extends Model
         return $this->belongsTo(Student::class);
     }
 
-    // ─── Helpers ───────────────────────────────────────────────
+    //  Helpers 
     public function isGraded(): bool
     {
         return $this->status === 'graded';

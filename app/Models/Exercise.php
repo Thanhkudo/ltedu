@@ -14,13 +14,13 @@ class Exercise extends Model
         'type', 'difficulty', 'created_by',
     ];
 
-    // ─── Relations ─────────────────────────────────────────────
+    //  Relations 
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    /** Bài tập này đã được giao trong những assignment nào */
+    /** Bai tap nay da duoc giao trong nhung assignment nao */
     public function assignments()
     {
         return $this->hasMany(Assignment::class);

@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 @section('title', 'Thêm câu hỏi kho')
 @section('page-title', 'Thêm câu hỏi vào kho')
 @section('page-actions')
@@ -23,41 +23,42 @@
                             </option>
                         @endforeach
                     </select>
-                </div>
-                <div class="col-md-3">
+                </div>                <div class="col-md-3">
                     <label class="form-label fw-semibold">Kiểu câu hỏi</label>
-                    <select name="interaction_type" id="interaction_type" class="form-select" onchange="toggleInteractionType()">
-                        <option value="normal" {{ old('interaction_type', 'normal') === 'normal' ? 'selected' : '' }}>Bình thường</option>
-                        <option value="ordering" {{ old('interaction_type') === 'ordering' ? 'selected' : '' }}>Sắp xếp đáp án</option>
-                        <option value="matching" {{ old('interaction_type') === 'matching' ? 'selected' : '' }}>Nối đáp án</option>
-                    </select>
-                </div>
-                <div class="col-md-3 normal-only">
-                    <label class="form-label fw-semibold">Kiểu trả lời</label>
-                    <select name="answer_mode" id="answer_mode" class="form-select" onchange="toggleAnswerMode()">
-                        <option value="select" {{ old('answer_mode') === 'select' ? 'selected' : '' }}>Chọn đáp án đúng</option>
-                        <option value="input" {{ old('answer_mode') === 'input' ? 'selected' : '' }}>Nhập đáp án đúng</option>
+                    <select name="question_type" id="question_type" class="form-select" onchange="toggleQuestionType()">
+                        <option value="select" {{ old('question_type', 'select') === 'select' ? 'selected' : '' }}>Chọn đáp án</option>
+                        <option value="input" {{ old('question_type') === 'input' ? 'selected' : '' }}>Nhập đáp án</option>
+                        <option value="matching" {{ old('question_type') === 'matching' ? 'selected' : '' }}>Nối đáp án</option>
+                        <option value="ordering" {{ old('question_type') === 'ordering' ? 'selected' : '' }}>Sắp xếp đáp án</option>
                     </select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-semibold">Ngữ cảnh câu hỏi</label>
                     <select name="context_type" id="context_type" class="form-select" onchange="toggleContext()">
                         <option value="normal">Bình thường</option>
-                        <option value="reading">Đọc đoạn văn</option>
-                        <option value="listening">Nghe audio</option>
+                        <option value="reading">Đọc hiểu</option>
+                        <option value="listening">Nghe</option>
                     </select>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label fw-semibold">Nhóm bài đọc/nghe</label>
+                    <select name="group_id" id="group_id" class="form-select" onchange="applyQuestionGroup()">
+                        <option value="">Không dùng nhóm</option>
+                        @foreach($groups as $group)
+                            <option value="{{ $group->id }}"
+                                data-category="{{ $group->category_id }}"
+                                data-type="{{ $group->type }}"
+                                {{ (string) old('group_id') === (string) $group->id ? 'selected' : '' }}>
+                                {{ $group->type === 'reading' ? 'Bài đọc' : 'Bài nghe' }} - {{ $group->title ?: 'Nhóm #' . $group->id }}
+                                (Lớp {{ $group->category->grade_level ?? '?' }} - {{ $group->category->name ?? '-' }})
+                            </option>
+                        @endforeach
+                    </select>
+                    <div class="form-text">Nếu chọn nhóm, hệ thống sẽ lấy danh mục, đoạn văn hoặc audio từ nhóm.</div>
                 </div>
                 <div class="col-md-5">
                     <label class="form-label fw-semibold">Tiêu đề</label>
                     <input type="text" name="title" class="form-control" value="{{ old('title') }}">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold">Độ khó</label>
-                    <select name="difficulty" class="form-select">
-                        <option value="easy">Easy</option>
-                        <option value="medium" selected>Medium</option>
-                        <option value="hard">Hard</option>
-                    </select>
                 </div>
             </div>
 
@@ -72,8 +73,11 @@
             </div>
 
             <div class="mt-3 d-none" id="audioWrap">
-                <label class="form-label fw-semibold">Link audio</label>
-                <input type="url" name="audio_url" class="form-control" placeholder="https://..." value="{{ old('audio_url') }}">
+                <label class="form-label fw-semibold">File audio</label>
+                <div class="input-group">
+                    <input type="text" name="audio_url" id="audio_url" class="form-control" placeholder="/data/audio/..." value="{{ old('audio_url') }}" readonly>
+                    <button type="button" class="btn btn-outline-primary" onclick="chooseCkfinderFile('audio_url', 'Audios')">Chọn từ CKFinder</button>
+                </div>
             </div>
 
             <div class="mt-3 normal-only" id="selectOptionsWrap">
@@ -114,12 +118,16 @@
                                 </select>
                             </div>
                             <div class="col-md-6 right-text"><input type="text" name="matching_right_text[]" class="form-control" placeholder="Vế phải bằng chữ"></div>
-                            <div class="col-md-6 right-image d-none"><input type="url" name="matching_right_image[]" class="form-control" placeholder="Link ảnh https://..."></div>
+                            <div class="col-md-6 right-image d-none">
+                                <div class="input-group">
+                                    <input type="text" name="matching_right_image[]" class="form-control ckfinder-image-input" placeholder="/data/images/..." readonly>
+                                    <button type="button" class="btn btn-outline-primary" onclick="chooseCkfinderSiblingFile(this, 'Images')">Chọn ảnh</button>
+                                </div>
+                            </div>
                         </div>
                     @endfor
                 </div>
                 <button type="button" class="btn btn-sm btn-outline-primary" onclick="addMatchingRow()">+ Thêm cặp</button>
-            </div>
 
             <div class="mt-3">
                 <label class="form-label fw-semibold">Giải thích</label>
@@ -135,23 +143,64 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('js/ckfinder/ckfinder.js') }}"></script>
+<script>CKFinder.config({ connectorPath: @json(route('ckfinder_connector')) });</script>
 <script>
-function toggleAnswerMode() {
-    const mode = document.getElementById('answer_mode').value;
-    document.getElementById('selectOptionsWrap').classList.toggle('d-none', mode !== 'select');
-    document.getElementById('inputAnswerWrap').classList.toggle('d-none', mode !== 'input');
+function chooseCkfinderFile(inputId, resourceType) {
+    if (typeof CKFinder === 'undefined') {
+        alert('CKFinder chưa được tải.');
+        return;
+    }
+
+    CKFinder.popup({
+        chooseFiles: true,
+        resourceType: resourceType,
+        connectorPath: '{{ route('ckfinder_connector') }}',
+        onInit: function(finder) {
+            finder.on('files:choose', function(evt) {
+                const file = evt.data.files.first();
+                document.getElementById(inputId).value = file.getUrl();
+            });
+        }
+    });
 }
+
+function chooseCkfinderSiblingFile(button, resourceType) {
+    const input = button.closest('.input-group').querySelector('input');
+    if (!input) return;
+
+    if (!input.id) {
+        input.id = 'ckfinder_file_' + Math.random().toString(36).slice(2);
+    }
+
+    chooseCkfinderFile(input.id, resourceType);
+}
+
 function toggleContext() {
     const context = document.getElementById('context_type').value;
     document.getElementById('passageWrap').classList.toggle('d-none', context !== 'reading');
     document.getElementById('audioWrap').classList.toggle('d-none', context !== 'listening');
 }
-function toggleInteractionType() {
-    const type = document.getElementById('interaction_type').value;
-    document.querySelectorAll('.normal-only').forEach(el => el.classList.toggle('d-none', type !== 'normal'));
+function applyQuestionGroup() {
+    const select = document.getElementById('group_id');
+    const option = select.options[select.selectedIndex];
+    if (!option || !option.value) {
+        toggleContext();
+        return;
+    }
+
+    const category = document.querySelector('[name="category_id"]');
+    const context = document.getElementById('context_type');
+    if (category && option.dataset.category) category.value = option.dataset.category;
+    if (context && option.dataset.type) context.value = option.dataset.type;
+    toggleContext();
+}
+function toggleQuestionType() {
+    const type = document.getElementById('question_type').value;
+    document.getElementById('selectOptionsWrap').classList.toggle('d-none', type !== 'select');
+    document.getElementById('inputAnswerWrap').classList.toggle('d-none', type !== 'input');
     document.getElementById('orderingWrap').classList.toggle('d-none', type !== 'ordering');
     document.getElementById('matchingWrap').classList.toggle('d-none', type !== 'matching');
-    toggleAnswerMode();
 }
 function addOrderingRow() {
     const input = document.createElement('input');
@@ -166,9 +215,9 @@ function toggleMatchingRight(select) {
 function addMatchingRow() {
     const row = document.createElement('div');
     row.className = 'row g-2 mb-2 matching-row';
-    row.innerHTML = `<div class="col-md-4"><input type="text" name="matching_left[]" class="form-control" placeholder="Vế trái"></div><div class="col-md-2"><select name="matching_right_type[]" class="form-select" onchange="toggleMatchingRight(this)"><option value="text">Chữ</option><option value="image">Ảnh</option></select></div><div class="col-md-6 right-text"><input type="text" name="matching_right_text[]" class="form-control" placeholder="Vế phải bằng chữ"></div><div class="col-md-6 right-image d-none"><input type="url" name="matching_right_image[]" class="form-control" placeholder="Link ảnh https://..."></div>`;
+    row.innerHTML = `<div class="col-md-4"><input type="text" name="matching_left[]" class="form-control" placeholder="Vế trái"></div><div class="col-md-2"><select name="matching_right_type[]" class="form-select" onchange="toggleMatchingRight(this)"><option value="text">Chữ</option><option value="image">Ảnh</option></select></div><div class="col-md-6 right-text"><input type="text" name="matching_right_text[]" class="form-control" placeholder="Vế phải bằng chữ"></div><div class="col-md-6 right-image d-none"><div class="input-group"><input type="text" name="matching_right_image[]" class="form-control ckfinder-image-input" placeholder="/data/images/..." readonly><button type="button" class="btn btn-outline-primary" onclick="chooseCkfinderSiblingFile(this, 'Images')">Chọn ảnh</button></div></div>`;
     document.getElementById('matchingRows').appendChild(row);
 }
-toggleInteractionType(); toggleContext();
+toggleQuestionType(); applyQuestionGroup();
 </script>
 @endpush

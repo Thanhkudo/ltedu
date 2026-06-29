@@ -16,7 +16,7 @@ class CreateClassStudentTable extends Migration
             $table->enum('status', ['active', 'dropped'])->default('active');
             $table->timestamps();
 
-            // Mỗi học viên chỉ đăng ký 1 lần vào mỗi lớp
+            // Moi hoc vien chi dang ky 1 lan vao moi lop
             $table->unique(['class_id', 'student_id']);
         });
     }

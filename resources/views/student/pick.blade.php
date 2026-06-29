@@ -1,5 +1,5 @@
 ﻿@extends('layouts.app')
-@section('title', 'Chao mung den LinhTrang')
+@section('title', __('ui.welcome'))
 
 @push('styles')
 <style>
@@ -25,20 +25,20 @@
 <div class="pick-card slide-up" style="margin-top:24px">
     <div class="text-center mb-4">
         <div class="pick-emoji mb-2">&#x1F393;</div>
-        <h2 style="font-weight:900;color:#1f2937;font-size:1.6rem">Chao mung ban!</h2>
-        <p style="color:#6b7280;font-weight:600;font-size:.9rem">Nhap ma vao hoc de bat dau &#x1F60A;</p>
+        <h2 style="font-weight:900;color:#1f2937;font-size:1.6rem">{{ __('ui.welcome') }}</h2>
+        <p style="color:#6b7280;font-weight:600;font-size:.9rem">{{ __('ui.enter_code') }} &#x1F60A;</p>
     </div>
 
     <form method="POST" action="{{ route('student.pick') }}">
         @csrf
         <div class="mb-4">
-            <label style="font-weight:800;color:#374151;font-size:.85rem;margin-bottom:8px;display:block">&#x1F511; Ma vao hoc</label>
+            <label style="font-weight:800;color:#374151;font-size:.85rem;margin-bottom:8px;display:block">&#x1F511; {{ __('ui.class_code') }}</label>
             <input
                 type="text"
                 name="entry_code"
                 value="{{ old('entry_code') }}"
                 class="form-control pick-select @error('entry_code') is-invalid @enderror"
-                placeholder="Vi du: HV0001"
+                placeholder="{{ __('ui.class_code_placeholder') }}"
                 required
             >
             @error('entry_code')
@@ -46,13 +46,13 @@
             @enderror
         </div>
         <button type="submit" class="btn btn-app btn-purple pick-btn">
-            <i class="bi bi-box-arrow-in-right"></i> Vao hoc thoi!
+            <i class="bi bi-box-arrow-in-right"></i> {{ __('ui.start_learning') }}
         </button>
     </form>
 
     <div class="text-center mt-4 pt-3" style="border-top:1px solid #f3f0ff">
         <a href="/admin" style="color:#9ca3af;font-size:.8rem;font-weight:700;text-decoration:none">
-            &#x1F6E1;&#xFE0F; Giao vien / Admin
+            &#x1F6E1;&#xFE0F; {{ __('ui.teacher_admin') }}
         </a>
     </div>
 </div>

@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 @section('title', $class->name)
 @section('page-title', $class->name)
 @section('page-actions')
@@ -12,7 +12,7 @@
 
 @section('content')
 <div class="row g-4">
-    {{-- Cột trái: Buổi học --}}
+    {{-- Cot trai: Buổi học --}}
     <div class="col-lg-8">
         <div class="card mb-4">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
@@ -31,7 +31,7 @@
                                 <span class="text-muted ms-2 small">{{ $session->session_date->format('d/m/Y H:i') }}</span>
                                 <span class="badge ms-1
                                     {{ $session->status === 'completed' ? 'bg-success' : ($session->status === 'cancelled' ? 'bg-danger' : 'bg-primary') }}">
-                                    {{ ['scheduled'=>'Sắp học','completed'=>'Đã học','cancelled'=>'Đã huỷ'][$session->status] ?? '' }}
+                                    {{ ['scheduled'=>'Sắp học','completed'=>'Đã học','cancelled'=>'Đã hủy'][$session->status] ?? '' }}
                                 </span>
                             </div>
                             <div class="d-flex gap-1">
@@ -48,7 +48,7 @@
                                     <i class="bi bi-clipboard2-plus"></i>
                                 </a>
                                 <form method="POST" action="/admin/sessions/{{ $session->id }}"
-                                      onsubmit="return confirm('Xoá buổi học này?')">
+                                      onsubmit="return confirm('Xóa buổi học này?')">
                                     @csrf @method('DELETE')
                                     <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                                 </form>
@@ -67,14 +67,14 @@
                                             <span class="badge bg-info text-dark small">Kho câu hỏi{{ $assignment->generated_question_count ? ' - ' . $assignment->generated_question_count . ' câu' : '' }}</span>
                                         @endif
                                         <span class="text-muted small ms-auto">
-                                            Hạn: {{ $assignment->due_date->format('d/m/Y') }}
+                                            Hạn: {{ $assignment->due_date ? $assignment->due_date->format('d/m/Y') : 'Không giới hạn' }}
                                         </span>
                                         <a href="/admin/assignments/{{ $assignment->id }}/submissions"
                                            class="btn btn-xs btn-sm btn-outline-secondary py-0 px-2">
                                             Bài nộp
                                         </a>
                                         <form method="POST" action="/admin/assignments/{{ $assignment->id }}" class="m-0"
-                                              onsubmit="return confirm('Xoá bài tập này?')">
+                                              onsubmit="return confirm('Xóa bài tập này?')">
                                             @csrf @method('DELETE')
                                             <button class="btn btn-sm btn-outline-danger py-0 px-2">
                                                 <i class="bi bi-trash"></i>
@@ -92,47 +92,136 @@
         </div>
     </div>
 
-    {{-- Cột phải: Học viên --}}
+    {{-- Cot phai: Học viên --}}
     <div class="col-lg-4">
-        <div class="card">
-            <div class="card-header bg-white fw-semibold">
-                <i class="bi bi-people me-2 text-success"></i>Học viên ({{ $class->activeStudents->count() }})
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <div class="fw-semibold"><i class="bi bi-people me-2 text-success"></i>Học viên ({{ $class->activeStudents->count() }})</div>
+                        <span class="badge bg-light text-dark">Tổng: {{ $class->activeStudents->count() }}</span>
+                    </div>
+                    <div class="list-group list-group-flush" style="max-height:300px;overflow-y:auto">
+                        @forelse($class->activeStudents as $student)
+                            <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                <div>
+                                    <div class="fw-semibold small">{{ $student->full_name }}</div>
+                                    <div class="text-muted" style="font-size:.75rem">{{ $student->student_code }}</div>
+                                </div>
+                                <form method="POST" action="/admin/classes/{{ $class->id }}/drop/{{ $student->id }}"
+                                      onsubmit="return confirm('Cho học viên rời lớp?')">
+                                    @csrf
+                                    <button class="btn btn-sm btn-outline-danger py-0 px-2" title="Rời lớp">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        @empty
+                            <div class="list-group-item text-muted text-center small">Chưa có học viên.</div>
+                        @endforelse
+                    </div>
+                </div>
             </div>
-            <div class="list-group list-group-flush" style="max-height:300px;overflow-y:auto">
-                @forelse($class->activeStudents as $student)
-                    <div class="list-group-item d-flex justify-content-between align-items-center py-2">
-                        <div>
-                            <div class="fw-semibold small">{{ $student->full_name }}</div>
-                            <div class="text-muted" style="font-size:.75rem">{{ $student->student_code }}</div>
+
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <div class="fw-semibold"><i class="bi bi-person-plus-fill me-2 text-primary"></i>Thêm học viên vào lớp</div>
+                        <span id="selectedCount" class="badge bg-secondary">0 đã chọn</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="studentSearch" class="form-label small fw-semibold">Tìm kiếm học viên</label>
+                            <input id="studentSearch" type="search" class="form-control form-control-sm" placeholder="Nhập tên hoặc mã học viên">
                         </div>
-                        <form method="POST" action="/admin/classes/{{ $class->id }}/drop/{{ $student->id }}"
-                              onsubmit="return confirm('Cho học viên rời lớp?')">
+                        <form method="POST" action="/admin/classes/{{ $class->id }}/enroll" id="enrollForm">
                             @csrf
-                            <button class="btn btn-sm btn-outline-danger py-0 px-2" title="Rời lớp">
-                                <i class="bi bi-x-lg"></i>
-                            </button>
+                            <div class="list-group enroll-student-list" id="studentList" style="max-height:300px;overflow-y:auto">
+                                @foreach($students as $student)
+                                    <label class="list-group-item list-group-item-action d-flex justify-content-between align-items-center enroll-student-item">
+                                        <div>
+                                            <div class="fw-semibold">{{ $student->full_name }}</div>
+                                            <div class="text-muted small">{{ $student->student_code }}</div>
+                                        </div>
+                                        <input class="form-check-input student-checkbox" type="checkbox" name="student_ids[]" value="{{ $student->id }}">
+                                    </label>
+                                @endforeach
+                            </div>
+                            <div class="text-center text-muted small mt-2 d-none" id="noStudentResult">Không tìm thấy học viên.</div>
+                            <div class="mt-3 d-grid">
+                                <button type="submit" class="btn btn-success btn-sm" id="enrollSubmit" disabled>
+                                    <i class="bi bi-person-plus me-1"></i>Thêm vào lớp
+                                </button>
+                            </div>
                         </form>
                     </div>
-                @empty
-                    <div class="list-group-item text-muted text-center small">Chưa có học viên.</div>
-                @endforelse
-            </div>
-            <div class="card-footer bg-white">
-                <form method="POST" action="/admin/classes/{{ $class->id }}/enroll"
-                      class="d-flex flex-column gap-2">
-                    @csrf
-                    <label class="form-label small fw-semibold mb-1">Thêm học viên vào lớp</label>
-                    <select name="student_ids[]" class="form-select form-select-sm" multiple size="4">
-                        @foreach($students as $student)
-                            <option value="{{ $student->id }}">{{ $student->full_name }}</option>
-                        @endforeach
-                    </select>
-                    <button type="submit" class="btn btn-success btn-sm">
-                        <i class="bi bi-person-plus me-1"></i>Thêm vào lớp
-                    </button>
-                </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
+
+@push('styles')
+    <style>
+        .enroll-student-item {
+            cursor: pointer;
+        }
+        .enroll-student-item .student-checkbox {
+            pointer-events: auto;
+        }
+        .enroll-student-item input[type="checkbox"] {
+            margin-left: .75rem;
+        }
+    </style>
+@endpush
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const studentSearch = document.getElementById('studentSearch');
+            const studentList = document.getElementById('studentList');
+            const studentCheckboxes = Array.from(document.querySelectorAll('.student-checkbox'));
+            const selectedCount = document.getElementById('selectedCount');
+            const enrollSubmit = document.getElementById('enrollSubmit');
+            const noStudentResult = document.getElementById('noStudentResult');
+
+            function updateSelectedCount() {
+                const selected = studentCheckboxes.filter(cb => cb.checked).length;
+                selectedCount.textContent = selected + ' đã chọn';
+                enrollSubmit.disabled = selected === 0;
+            }
+
+            function filterStudents() {
+                const query = studentSearch.value.trim().toLowerCase();
+                let visible = 0;
+                studentCheckboxes.forEach((checkbox) => {
+                    const item = checkbox.closest('.enroll-student-item');
+                    if (!item) return;
+
+                    const text = item.textContent.toLowerCase();
+                    const match = !query || text.includes(query);
+                    item.style.display = match ? '' : 'none';
+                    if (match) visible++;
+                });
+                noStudentResult.classList.toggle('d-none', visible > 0);
+            }
+
+            studentSearch.addEventListener('input', filterStudents);
+            studentCheckboxes.forEach((checkbox) => {
+                checkbox.addEventListener('change', updateSelectedCount);
+                const item = checkbox.closest('.enroll-student-item');
+                if (item) {
+                    item.addEventListener('click', function (event) {
+                        if (event.target === checkbox) return;
+                        checkbox.checked = !checkbox.checked;
+                        updateSelectedCount();
+                    });
+                }
+            });
+
+            updateSelectedCount();
+        });
+    </script>
+@endpush
+

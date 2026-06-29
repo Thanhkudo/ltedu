@@ -11,7 +11,7 @@ class CreateStudentsTable extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('student_code')->unique()->comment('Mã học viên, VD: HV001');
+            $table->string('student_code')->unique()->comment('Ma hoc vien, VD: HV001');
             $table->string('full_name');
             $table->string('email')->unique();
             $table->string('phone', 20)->nullable();

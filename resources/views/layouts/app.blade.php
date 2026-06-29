@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'H&#7885;c vi&#234;n') - LinhTrang School</title>
+    <title>@yield('title', __('ui.student_portal')) - LinhTrang School</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&subset=vietnamese&display=swap" rel="stylesheet">
@@ -17,6 +17,9 @@
         .s-topbar{background:linear-gradient(135deg,#6c63ff 0%,#a855f7 100%);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(108,99,255,.35)}
         .s-topbar .brand{color:#fff;font-weight:900;font-size:1.15rem;text-decoration:none;display:flex;align-items:center;gap:6px}
         .s-topbar .brand .logo-pill{background:rgba(255,255,255,.25);border-radius:10px;padding:3px 10px}
+        .language-switcher{display:flex;align-items:center;border:1px solid rgba(255,255,255,.38);border-radius:10px;overflow:hidden;background:rgba(255,255,255,.12)}
+        .language-switcher a{color:rgba(255,255,255,.76);font-size:.7rem;font-weight:900;padding:5px 8px;text-decoration:none;line-height:1}
+        .language-switcher a.active{background:#fff;color:var(--purple)}
         .s-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#ffd166,#ff6b9d);display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:.9rem;border:2px solid rgba(255,255,255,.6);flex-shrink:0}
         .s-bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid #ede9fe;display:flex;z-index:200;box-shadow:0 -4px 20px rgba(108,99,255,.12)}
         .s-bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 4px 6px;color:#9ca3af;text-decoration:none;font-size:.62rem;font-weight:800;transition:all .2s;gap:2px;position:relative}
@@ -70,26 +73,42 @@
     @if(session('student_id'))
         @php $__topStudent = \App\Models\Student::find(session('student_id')); @endphp
         <div class="d-flex align-items-center gap-2">
+            <div class="language-switcher" aria-label="{{ __('ui.language') }}">
+                <a href="{{ route('language.switch', 'en') }}" class="{{ app()->getLocale() === 'en' ? 'active' : '' }}">EN</a>
+                <a href="{{ route('language.switch', 'vi') }}" class="{{ app()->getLocale() === 'vi' ? 'active' : '' }}">VI</a>
+            </div>
+            <a href="{{ route('guide') }}" style="color:#fff;font-size:.78rem;font-weight:800;text-decoration:none;background:rgba(255,255,255,.2);padding:6px 10px;border-radius:10px;">
+                <i class="bi bi-question-circle"></i> {{ __('ui.guide.menu') }}
+            </a>
             <div class="s-avatar">{{ mb_substr($__topStudent->full_name ?? 'U', 0, 1) }}</div>
             <div style="color:#fff;line-height:1.2">
-                <div style="font-size:.7rem;opacity:.8">Xin chao &#x1F44B;</div>
+                <div style="font-size:.7rem;opacity:.8">{{ __('ui.hello') }} &#x1F44B;</div>
                 <div style="font-size:.82rem;font-weight:800">{{ $__topStudent->full_name ?? '' }}</div>
             </div>
             <form method="POST" action="/logout-student" class="m-0 ms-1">
                 @csrf
                 <button style="background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:10px;font-size:.72rem;font-weight:800;padding:5px 10px;cursor:pointer;">
-                    &#x21A9; Doi
+                    &#x21A9; {{ __('ui.switch_student') }}
                 </button>
             </form>
         </div>
     @else
-        <a href="/admin" style="color:#fff;font-size:.78rem;font-weight:800;text-decoration:none;background:rgba(255,255,255,.2);padding:6px 12px;border-radius:10px;">
-            &#x1F6E1;&#xFE0F; Admin
-        </a>
+        <div class="d-flex align-items-center gap-2">
+            <div class="language-switcher" aria-label="{{ __('ui.language') }}">
+                <a href="{{ route('language.switch', 'en') }}" class="{{ app()->getLocale() === 'en' ? 'active' : '' }}">EN</a>
+                <a href="{{ route('language.switch', 'vi') }}" class="{{ app()->getLocale() === 'vi' ? 'active' : '' }}">VI</a>
+            </div>
+            <a href="{{ route('guide') }}" style="color:#fff;font-size:.78rem;font-weight:800;text-decoration:none;background:rgba(255,255,255,.2);padding:6px 10px;border-radius:10px;">
+                <i class="bi bi-question-circle"></i> {{ __('ui.guide.menu') }}
+            </a>
+            <a href="/admin" style="color:#fff;font-size:.78rem;font-weight:800;text-decoration:none;background:rgba(255,255,255,.2);padding:6px 12px;border-radius:10px;">
+                &#x1F6E1;&#xFE0F; {{ __('ui.admin') }}
+            </a>
+        </div>
     @endif
 </div>
 
-<div class="px-3 py-3 mx-auto" style="max-width:700px">
+<div class="px-3 py-3 mx-auto" style="max-width:1200px">
     @if(session('success'))
         <div class="alert s-toast alert-success alert-dismissible fade show slide-up">
             &#x2705; {{ session('success') }}
@@ -110,7 +129,7 @@
 <nav class="s-bottom-nav">
     <a href="/" class="{{ request()->is('/') ? 'active' : '' }}">
         <i class="bi bi-house-heart-fill"></i>
-        Trang chu
+        {{ __('ui.home') }}
         @if(request()->is('/')) <span class="s-nav-pip"></span> @endif
     </a>
     @if($__navStudent)
@@ -122,10 +141,6 @@
         </a>
         @endforeach
     @endif
-    <a href="/admin">
-        <i class="bi bi-shield-lock-fill"></i>
-        Admin
-    </a>
 </nav>
 @endif
 

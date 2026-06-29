@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 @section('title', 'Danh mục câu hỏi')
 @section('page-title', 'Quản lý danh mục câu hỏi')
 
@@ -63,7 +63,7 @@
                             <td>{{ $cat->name }}</td>
                             <td>Lớp {{ $cat->grade_level }}</td>
                             <td>{{ ucfirst($cat->skill_type) }}</td>
-                            <td>{{ $cat->topic ?: '—' }}</td>
+                            <td>{{ $cat->topic ?: '-' }}</td>
                             <td class="text-end">
                                 <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editCat{{ $cat->id }}">
                                     <i class="bi bi-pencil-square"></i>
@@ -135,3 +135,4 @@
     </div>
 </div>
 @endsection
+

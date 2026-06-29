@@ -15,7 +15,7 @@ class AdminAccess
         }
 
         if (!in_array(Auth::user()->role, ['admin', 'teacher'])) {
-            abort(403, 'Bạn không có quyền truy cập trang quản trị.');
+            abort(403, 'Ban khong co quyen truy cap trang quan tri.');
         }
 
         return $next($request);

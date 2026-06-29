@@ -27,7 +27,7 @@ class AdminModulePermission
         $allowedModules = $permissions[$user->role] ?? [];
 
         if (!in_array($module, $allowedModules)) {
-            abort(403, 'Báº¡n khÃ´ng cÃ³ quyá»n truy cáº­p module nÃ y.');
+            abort(403, 'Ban khong co quyen truy cap module nay.');
         }
 
         return $next($request);

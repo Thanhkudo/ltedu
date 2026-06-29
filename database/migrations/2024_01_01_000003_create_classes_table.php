@@ -10,7 +10,7 @@ class CreateClassesTable extends Migration
     {
         Schema::create('classes', function (Blueprint $table) {
             $table->id();
-            $table->string('class_code')->unique()->comment('Mã lớp, VD: LOP-001');
+            $table->string('class_code')->unique()->comment('Ma lop, VD: LOP-001');
             $table->string('name');
             $table->text('description')->nullable();
             $table->foreignId('teacher_id')->constrained('users')->cascadeOnDelete();

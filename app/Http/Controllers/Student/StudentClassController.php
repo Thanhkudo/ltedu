@@ -11,14 +11,14 @@ class StudentClassController extends Controller
 {
     /**
      * GET /classes/{id}
-     * Học viên xem chi tiết lớp học: buổi học + bài tập.
+     * Hoc vien xem chi tiet lop hoc: buoi hoc + bai tap.
      */
     public function show(Request $request, int $id)
     {
         $studentId = $request->session()->get('student_id');
 
         if (!$studentId) {
-            return redirect('/')->with('error', 'Vui lòng nhập mã vào học trước.');
+            return redirect('/')->with('error', 'Vui long nhap ma vao hoc truoc.');
         }
 
         $student = Student::findOrFail($studentId);

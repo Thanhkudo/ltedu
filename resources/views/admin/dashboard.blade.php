@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 @section('title', 'Dashboard')
 @section('page-title', 'Dashboard')
 
@@ -7,9 +7,10 @@
 <div class="row g-3 mb-4">
     @php
         $cards = [
-            ['label'=>'Lớp học',      'value'=>$stats['classes'],     'icon'=>'journal-bookmark-fill', 'color'=>'primary'],
-            ['label'=>'Học viên',     'value'=>$stats['students'],    'icon'=>'people-fill',           'color'=>'success'],
-            ['label'=>'Bài tập',      'value'=>$stats['exercises'],   'icon'=>'file-earmark-text-fill','color'=>'info'],            ['label'=>'Chờ chấm bài', 'value'=>$stats['submissions'], 'icon'=>'hourglass-split',       'color'=>'danger'],
+            ['label'=>__('ui.classes'), 'value'=>$stats['classes'], 'icon'=>'journal-bookmark-fill', 'color'=>'primary'],
+            ['label'=>__('ui.students'), 'value'=>$stats['students'], 'icon'=>'people-fill', 'color'=>'success'],
+            ['label'=>__('ui.assignments'), 'value'=>$stats['exercises'], 'icon'=>'file-earmark-text-fill','color'=>'info'],
+            ['label'=>__('ui.pending_grading'), 'value'=>$stats['submissions'], 'icon'=>'hourglass-split', 'color'=>'danger'],
         ];
     @endphp
     @foreach($cards as $card)
@@ -29,18 +30,18 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header bg-white d-flex justify-content-between">
-                <span class="fw-semibold"><i class="bi bi-journal-bookmark me-2 text-primary"></i>Lớp học gần đây</span>
-                <a href="/admin/classes" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
+                <span class="fw-semibold"><i class="bi bi-journal-bookmark me-2 text-primary"></i>{{ __('ui.recent_classes') }}</span>
+                <a href="/admin/classes" class="btn btn-sm btn-outline-primary">{{ __('ui.view_all') }}</a>
             </div>
             <div class="list-group list-group-flush">
                 @foreach($recentClasses as $class)
                     <a href="/admin/classes/{{ $class->id }}" class="list-group-item list-group-item-action d-flex justify-content-between">
                         <div>
                             <div class="fw-semibold">{{ $class->name }}</div>
-                            <small class="text-muted">GV: {{ $class->teacher->name ?? '—' }}</small>
+                            <small class="text-muted">{{ __('ui.teacher') }}: {{ $class->teacher->name ?? '-' }}</small>
                         </div>
-                        <span class="badge rounded-pill bg-{{ $class->status === 'active' ? 'success' : 'secondary' }}">
-                            {{ ucfirst($class->status) }}
+                        <span class="text-{{ $class->status === 'active' ? 'success' : 'secondary' }} fw-semibold">
+                            {{ ['active' => 'Đang hoạt động', 'inactive' => 'Tạm dừng', 'completed' => 'Đã hoàn thành'][$class->status] ?? ucfirst($class->status) }}
                         </span>
                     </a>
                 @endforeach
@@ -50,8 +51,8 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header bg-white d-flex justify-content-between">
-                <span class="fw-semibold"><i class="bi bi-people me-2 text-success"></i>Học viên gần đây</span>
-                <a href="/admin/students" class="btn btn-sm btn-outline-success">Xem tất cả</a>
+                <span class="fw-semibold"><i class="bi bi-people me-2 text-success"></i>{{ __('ui.recent_students') }}</span>
+                <a href="/admin/students" class="btn btn-sm btn-outline-success">{{ __('ui.view_all') }}</a>
             </div>
             <div class="list-group list-group-flush">
                 @foreach($recentStudents as $student)

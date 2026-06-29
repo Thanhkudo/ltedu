@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Dùng tên ClassSession để tránh conflict với Session facade của Laravel.
- * Map với bảng 'sessions' trong DB.
+ * Dung ten ClassSession de tranh conflict voi Session facade cua Laravel.
+ * Map voi bang 'sessions' trong DB.
  */
 class ClassSession extends Model
 {
@@ -24,13 +24,13 @@ class ClassSession extends Model
         'session_date' => 'datetime',
     ];
 
-    // ─── Relations ─────────────────────────────────────────────
+    //  Relations 
     public function schoolClass()
     {
         return $this->belongsTo(SchoolClass::class, 'class_id');
     }
 
-    /** Bài tập được giao trong buổi học này */
+    /** Bai tap duoc giao trong buoi hoc nay */
     public function assignments()
     {
         return $this->hasMany(Assignment::class, 'session_id');

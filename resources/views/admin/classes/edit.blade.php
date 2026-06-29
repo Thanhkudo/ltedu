@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 @section('title', 'Sửa lớp học')
 @section('page-title', 'Sửa lớp học: ' . $class->name)
 
@@ -40,7 +40,7 @@
                 <label class="form-label">Trạng thái</label>
                 <select name="status" class="form-select">
                     @foreach(['active','inactive','completed'] as $s)
-                        <option value="{{ $s }}" {{ old('status', $class->status) == $s ? 'selected' : '' }}>{{ ucfirst($s) }}</option>
+                        <option value="{{ $s }}" {{ old('status', $class->status) == $s ? 'selected' : '' }}>{{ ['active' => 'Đang hoạt động', 'inactive' => 'Tạm dừng', 'completed' => 'Đã hoàn thành'][$s] ?? ucfirst($s) }}</option>
                     @endforeach
                 </select>
             </div>
@@ -50,10 +50,11 @@
             </div>
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary"><i class="bi bi-save me-2"></i>Cập nhật</button>
-                <a href="/admin/classes/{{ $class->id }}" class="btn btn-outline-secondary">Huỷ</a>
+                <a href="/admin/classes/{{ $class->id }}" class="btn btn-outline-secondary">Hủy</a>
             </div>
         </form>
     </div>
 </div>
 </div></div>
 @endsection
+

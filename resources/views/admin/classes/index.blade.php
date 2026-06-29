@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 @section('title', 'Quản lý lớp học')
 @section('page-title', 'Quản lý lớp học')
 @section('page-actions')
@@ -22,10 +22,10 @@
                     <tr>
                         <td><span class="badge bg-light text-dark">{{ $class->class_code }}</span></td>
                         <td class="fw-semibold">{{ $class->name }}</td>
-                        <td>{{ $class->teacher->name ?? '—' }}</td>
+                        <td>{{ $class->teacher->name ?? '-' }}</td>
                         <td>{{ $class->start_date->format('d/m/Y') }}</td>
                         <td>
-                            <span class="badge badge-{{ $class->status }}">{{ ucfirst($class->status) }}</span>
+                            <span class="badge badge-{{ $class->status }}">{{ ['active' => 'Đang hoạt động', 'inactive' => 'Tạm dừng', 'completed' => 'Đã hoàn thành'][$class->status] ?? ucfirst($class->status) }}</span>
                         </td>
                         <td class="text-end">
                             <a href="/admin/classes/{{ $class->id }}" class="btn btn-sm btn-outline-info">
@@ -35,7 +35,7 @@
                                 <i class="bi bi-pencil"></i>
                             </a>
                             <form method="POST" action="/admin/classes/{{ $class->id }}" class="d-inline"
-                                  onsubmit="return confirm('Xoá lớp học này?')">
+                                  onsubmit="return confirm('Xóa lớp học này?')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                             </form>
@@ -52,3 +52,4 @@
     @endif
 </div>
 @endsection
+

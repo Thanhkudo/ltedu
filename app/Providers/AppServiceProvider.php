@@ -15,8 +15,8 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        // Bind Repository interfaces tới implementations cụ thể
-        // Giúp dễ swap implementation mà không thay đổi code ở Service/Controller
+        // Bind Repository interfaces toi implementations cu the
+        // Giup de swap implementation ma khong thay doi code o Service/Controller
         $this->app->bind(StudentRepositoryInterface::class, StudentRepository::class);
         $this->app->bind(ClassRepositoryInterface::class, ClassRepository::class);
         $this->app->bind(ExerciseRepositoryInterface::class, ExerciseRepository::class);

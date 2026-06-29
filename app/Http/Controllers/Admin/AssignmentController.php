@@ -22,7 +22,7 @@ class AssignmentController extends Controller
 
     /**
      * GET /admin/assignments/create?session_id=X
-     * Form giao bài tập cho một buổi học.
+     * Form giao bai tap cho mot buoi hoc.
      */
     public function create(Request $request)
     {
@@ -40,7 +40,6 @@ class AssignmentController extends Controller
 
         $generated = $this->questionGenerationService->createExerciseFromConfig([
             'grade_level' => $data['grade_level'],
-            'skill_type' => $data['skill_type'],
             'question_configs' => $data['question_configs'] ?? [],
         ], auth()->id());
 
@@ -48,7 +47,6 @@ class AssignmentController extends Controller
         $data['generation_mode'] = 'random';
         $data['generation_config'] = [
             'grade_level' => $data['grade_level'],
-            'skill_type' => $data['skill_type'],
             'question_configs' => $data['question_configs'] ?? [],
             'question_ids' => $generated['question_ids'] ?? [],
         ];
@@ -56,7 +54,6 @@ class AssignmentController extends Controller
 
         unset(
             $data['grade_level'],
-            $data['skill_type'],
             $data['question_configs']
         );
 
@@ -74,12 +71,12 @@ class AssignmentController extends Controller
         $this->assignmentService->deleteAssignment($id);
 
         return redirect()->route('admin.classes.show', $classId)
-            ->with('success', 'Xoá bài tập thành công!');
+            ->with('success', 'Xóa bài tập thành công!');
     }
 
     /**
      * GET /admin/assignments/{id}/submissions
-     * Xem bài nộp + chấm điểm.
+     * Xem bai nop + cham diem.
      */
     public function submissions(int $id)
     {
@@ -100,6 +97,6 @@ class AssignmentController extends Controller
 
         $this->assignmentService->gradeSubmission($subId, $request->score, $request->feedback);
         return redirect()->route('admin.assignments.submissions', $id)
-            ->with('success', 'Chấm điểm thành công!');
+            ->with('success', 'Cham diem thanh cong!');
     }
 }

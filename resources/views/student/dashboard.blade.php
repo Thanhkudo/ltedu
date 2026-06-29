@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 @section('title', 'Dashboard')
 
 @push('styles')
@@ -49,26 +49,50 @@
     }
     .student-hero-grid {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 12px;
         margin-top: 18px;
     }
     .student-mini-stat {
         border-radius: 20px;
         padding: 14px 16px;
+        min-height: 104px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         background: rgba(255, 255, 255, .12);
         backdrop-filter: blur(8px);
     }
+    .student-mini-stat.clickable {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+        transition: transform .2s ease, background .2s ease;
+    }
+    .student-mini-stat.clickable:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 255, 255, .2);
+    }
     .student-mini-stat .value {
-        font-size: 1.8rem;
+        font-size: 1.25rem;
         font-weight: 900;
-        line-height: 1;
+        line-height: 1.2;
+        word-break: break-word;
+        overflow-wrap: anywhere;
     }
     .student-mini-stat .label {
-        font-size: .78rem;
+        font-size: .72rem;
         font-weight: 700;
         opacity: .88;
         margin-top: 6px;
+        letter-spacing: .15px;
+    }
+    .student-mini-stat .subtext {
+        font-size: .68rem;
+        font-weight: 700;
+        opacity: .82;
+        margin-top: 4px;
     }
     .dashboard-shell {
         margin-top: 18px;
@@ -252,6 +276,9 @@
         .quick-grid {
             grid-template-columns: 1fr;
         }
+        .student-mini-stat {
+            min-height: 92px;
+        }
         .student-hero {
             padding: 20px 18px;
             border-radius: 24px;
@@ -269,85 +296,50 @@
 <section class="student-hero slide-up">
     <div class="student-hero-badge">
         <i class="bi bi-stars"></i>
-        Khu vuc hoc tap cua ban
+        {{ __('ui.learning_area') }}
     </div>
 
     <div class="mt-3 d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3">
         <div>
-            <h2 class="mb-2" style="font-size:1.8rem;font-weight:900;line-height:1.15;">Xin chao, {{ $student->full_name }}!</h2>
+            <h2 class="mb-2" style="font-size:1.8rem;font-weight:900;line-height:1.15;">{{ __('ui.welcome_student', ['name' => $student->full_name]) }}</h2>
             <div style="font-size:.95rem;opacity:.92;max-width:520px;">
-                Theo doi lop hoc, bai tap va bai kiem tra sap dien ra tai mot noi de hoc nhanh hon moi ngay.
+                {{ __('ui.learning_summary') }}
             </div>
         </div>
         <div class="text-md-end">
-            <div style="font-size:.78rem;font-weight:800;opacity:.8;text-transform:uppercase;letter-spacing:.4px;">Ma hoc vien</div>
+            <div style="font-size:.78rem;font-weight:800;opacity:.8;text-transform:uppercase;letter-spacing:.4px;">{{ __('ui.student_code') }}</div>
             <div style="font-size:1.05rem;font-weight:900;">{{ $student->student_code }}</div>
         </div>
     </div>
 
     <div class="student-hero-grid">
-        <div class="student-mini-stat pop-in">
-            <div class="value">{{ $classCount }}</div>
-            <div class="label">Lop dang hoc</div>
-        </div>
+        @if($featuredClass)
+            <a href="/classes/{{ $featuredClass->id }}" class="student-mini-stat clickable pop-in">
+                <div class="label">{{ __('ui.current_class') }}</div>
+                <div class="value">{{ $featuredClass->name }}</div>
+                <div class="subtext">{{ __('ui.view_details') }}</div>
+            </a>
+        @else
+            <div class="student-mini-stat pop-in">
+                <div class="value">{{ $classCount }}</div>
+                <div class="label">{{ __('ui.active_classes') }}</div>
+            </div>
+        @endif
         <div class="student-mini-stat pop-in" style="animation-delay:.08s;">
-            <div class="value">{{ $assignmentCount ?? $upcomingAssignments->count() }}</div>
-            <div class="label">Bai tap da giao</div>
-        </div>
-        <div class="student-mini-stat pop-in" style="animation-delay:.16s;">
-            <div class="value">{{ $activeTests->count() }}</div>
-            <div class="label">Bai kiem tra dang mo</div>
+            <div class="label">{{ __('ui.assignment_summary') }}</div>
+            <div class="value">{{ $assignmentCount ?? $upcomingAssignments->count() }} / {{ $completedAssignmentCount ?? 0 }}</div>
+            <div class="subtext">{{ __('ui.completed_assignments') }}</div>
         </div>
     </div>
 </section>
 
 <div class="row g-4 dashboard-shell">
     <div class="col-lg-5">
-        <section class="dashboard-panel slide-up" style="animation-delay:.05s;">
-            <div class="dashboard-panel-header">
-                <div class="dashboard-panel-title">
-                    <span class="icon" style="background:#dbeafe;color:#1d4ed8;"><i class="bi bi-journal-richtext"></i></span>
-                    Lop dang hoc
-                </div>
-                <span class="s-tag tag-blue">{{ $classCount }} lop</span>
-            </div>
-
-            <div class="class-stack">
-                @forelse($student->classes as $class)
-                    <a href="/classes/{{ $class->id }}" class="class-card">
-                        <div class="class-card-top">
-                            <div>
-                                <div class="class-card-name">{{ $class->name }}</div>
-                                <div class="class-card-meta">Giao vien: {{ $class->teacher->name ?? 'â€”' }}</div>
-                            </div>
-                            <span class="s-tag {{ $class->status === 'active' ? 'tag-green' : 'tag-purple' }}">
-                                {{ $class->status === 'active' ? 'Dang hoc' : ucfirst($class->status) }}
-                            </span>
-                        </div>
-
-                        <div class="mt-3 d-flex justify-content-between align-items-center">
-                            <small class="class-card-meta">
-                                <i class="bi bi-calendar-week me-1"></i>
-                                {{ $class->sessions->count() }} buoi hoc
-                            </small>
-                            <small style="font-weight:900;color:#2563eb;">Xem chi tiet <i class="bi bi-arrow-right-short"></i></small>
-                        </div>
-                    </a>
-                @empty
-                    <div class="empty-card">
-                        <div class="icon"><i class="bi bi-journal-x"></i></div>
-                        <div class="fw-bold mb-1">Chua co lop hoc nao</div>
-                        <div class="small">Khi duoc xep lop, thong tin hoc tap cua ban se hien thi tai day.</div>
-                    </div>
-                @endforelse
-            </div>
-        </section>
-
         <section class="dashboard-panel slide-up" style="animation-delay:.1s;">
             <div class="dashboard-panel-header mb-3">
                 <div class="dashboard-panel-title">
                     <span class="icon" style="background:#e0f2fe;color:#0891b2;"><i class="bi bi-lightning-charge-fill"></i></span>
-                    Truy cap nhanh
+                    {{ __('ui.quick_access') }}
                 </div>
             </div>
 
@@ -355,16 +347,20 @@
                 <a href="{{ $featuredClass ? '/classes/' . $featuredClass->id : '/' }}" class="quick-action study">
                     <span class="icon"><i class="bi bi-book-half"></i></span>
                     <div>
-                        <div class="fw-bold mb-1">Vao lop hoc</div>
-                        <div class="small text-muted">{{ $featuredClass ? 'Mo nhanh lop ' . $featuredClass->name : 'Xem tong quan hoc tap' }}</div>
+                        <div class="fw-bold mb-1">{{ __('ui.open_class') }}</div>
+                        <div class="small text-muted">{{ $featuredClass ? __('ui.open_class_named', ['class' => $featuredClass->name]) : __('ui.learning_overview') }}</div>
                     </div>
                 </a>
 
-                <a href="{{ $upcomingAssignments->first() ? '/assignments/' . $upcomingAssignments->first()->id : '/' }}" class="quick-action work">
+                @php
+                    $quickAssignment = $upcomingAssignments->first();
+                    $quickSubmission = $quickAssignment ? $quickAssignment->submissions->first() : null;
+                @endphp
+                <a href="{{ $quickAssignment ? ($quickSubmission ? route('student.assignments.show', $quickAssignment->id) : route('student.assignments.practice', $quickAssignment->id)) : '/' }}" class="quick-action work">
                     <span class="icon"><i class="bi bi-pencil-square"></i></span>
                     <div>
-                        <div class="fw-bold mb-1">Mo bai tap</div>
-                        <div class="small text-muted">{{ $upcomingAssignments->first() ? 'Mo bai tap duoc giao gan day' : 'Chua co bai tap nao duoc giao' }}</div>
+                        <div class="fw-bold mb-1">{{ __('ui.open_assignment') }}</div>
+                        <div class="small text-muted">{{ $upcomingAssignments->first() ? __('ui.open_recent_assignment') : __('ui.no_assignments_short') }}</div>
                     </div>
                 </a>
             </div>
@@ -376,71 +372,35 @@
             <div class="dashboard-panel-header">
                 <div class="dashboard-panel-title">
                     <span class="icon" style="background:#ffedd5;color:#ea580c;"><i class="bi bi-alarm-fill"></i></span>
-                    Bai tap gan day
+                    {{ __('ui.recent_assignments') }}
                 </div>
-                <span class="s-tag tag-orange">Co the nop nhieu lan</span>
+                <span class="s-tag tag-orange">{{ __('ui.resubmission_allowed') }}</span>
             </div>
 
             <div class="task-list">
                 @forelse($upcomingAssignments as $assignment)
-                    <a href="/assignments/{{ $assignment->id }}" class="task-card assignment">
+                    @php $submission = $assignment->submissions->first(); @endphp
+                    <a href="{{ $submission ? route('student.assignments.show', $assignment->id) : route('student.assignments.practice', $assignment->id) }}" class="task-card assignment">
                         <div class="task-card-top">
                             <div>
                                 <div class="task-card-name">{{ $assignment->exercise->title }}</div>
-                                <div class="task-card-meta">{{ $assignment->session->schoolClass->name ?? 'Chua ro lop' }}</div>
+                                <div class="task-card-meta">{{ $assignment->session->schoolClass->name ?? __('ui.unknown_class') }}</div>
                             </div>
                             <span class="task-pill deadline">
                                 <i class="bi bi-hourglass-split"></i>
-                                {{ $assignment->due_date ? $assignment->due_date->format('d/m H:i') : 'Khong gioi han' }}
+                                {{ $assignment->due_date ? $assignment->due_date->format('d/m H:i') : __('ui.no_deadline') }}
                             </span>
                         </div>
                         <div class="mt-3 d-flex justify-content-between align-items-center">
-                            <small class="task-card-meta">Nhan vao de lam bai. He thong luu 3 lan nop gan nhat.</small>
-                            <small style="font-weight:900;color:#f97316;">Mo bai <i class="bi bi-arrow-right-short"></i></small>
+                            <small class="task-card-meta">{{ __('ui.assignment_submission_hint') }}</small>
+                            <small style="font-weight:900;color:#f97316;">{{ __('ui.start_assignment') }} <i class="bi bi-arrow-right-short"></i></small>
                         </div>
                     </a>
                 @empty
                     <div class="empty-card">
                         <div class="icon"><i class="bi bi-check2-circle"></i></div>
-                        <div class="fw-bold mb-1">Chua co bai tap nao duoc giao</div>
-                        <div class="small">Khi giao vien giao bai, danh sach bai tap se hien thi tai day.</div>
-                    </div>
-                @endforelse
-            </div>
-        </section>
-
-        <section class="dashboard-panel slide-up" style="animation-delay:.12s;">
-            <div class="dashboard-panel-header">
-                <div class="dashboard-panel-title">
-                    <span class="icon" style="background:#dcfce7;color:#15803d;"><i class="bi bi-patch-check-fill"></i></span>
-                    Bai kiem tra dang mo
-                </div>
-                <span class="s-tag tag-green">San sang vao lam</span>
-            </div>
-
-            <div class="task-list">
-                @forelse($activeTests as $test)
-                    <a href="/tests/{{ $test->id }}" class="task-card test">
-                        <div class="task-card-top">
-                            <div>
-                                <div class="task-card-name">{{ $test->test->title }}</div>
-                                <div class="task-card-meta">{{ $test->schoolClass->name ?? 'Chua ro lop' }}</div>
-                            </div>
-                            <span class="task-pill duration">
-                                <i class="bi bi-stopwatch-fill"></i>
-                                {{ $test->effective_duration }} phut
-                            </span>
-                        </div>
-                        <div class="mt-3 d-flex justify-content-between align-items-center">
-                            <small class="task-card-meta">Dong luc: {{ $test->ends_at->format('H:i d/m/Y') }}</small>
-                            <small style="font-weight:900;color:#16a34a;">Vao kiem tra <i class="bi bi-arrow-right-short"></i></small>
-                        </div>
-                    </a>
-                @empty
-                    <div class="empty-card">
-                        <div class="icon"><i class="bi bi-emoji-smile"></i></div>
-                        <div class="fw-bold mb-1">Hien chua co bai kiem tra nao mo</div>
-                        <div class="small">Khi giao vien mo bai kiem tra, ban se thay ngay tai khu vuc nay.</div>
+                        <div class="fw-bold mb-1">{{ __('ui.no_assignments') }}</div>
+                        <div class="small">{{ __('ui.no_assignments_hint') }}</div>
                     </div>
                 @endforelse
             </div>
@@ -448,4 +408,3 @@
     </div>
 </div>
 @endsection
-

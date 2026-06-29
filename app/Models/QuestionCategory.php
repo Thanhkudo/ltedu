@@ -21,4 +21,9 @@ class QuestionCategory extends Model
     {
         return $this->hasMany(QuestionBankItem::class, 'category_id');
     }
+
+    public function questionGroups()
+    {
+        return $this->hasMany(QuestionGroup::class, 'category_id');
+    }
 }

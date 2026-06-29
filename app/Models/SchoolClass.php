@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * DÃ¹ng tÃªn SchoolClass Ä‘á»ƒ trÃ¡nh conflict vá»›i tá»« khÃ³a 'class' cá»§a PHP.
- * Map vá»›i báº£ng 'classes' trong DB.
+ * Dung ten SchoolClass de tranh conflict voi tu khoa 'class' cua PHP.
+ * Map voi bang 'classes' trong DB.
  */
 class SchoolClass extends Model
 {
@@ -25,13 +25,13 @@ class SchoolClass extends Model
         'end_date'   => 'date',
     ];
 
-    // â”€â”€â”€ Relations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // a"a"a" Relations a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"a"
     public function teacher()
     {
         return $this->belongsTo(User::class, 'teacher_id');
     }
 
-    /** Há»c viÃªn thuá»™c lá»›p nÃ y */
+    /** Hoc vien thuoc lop nay */
     public function students()
     {
         return $this->belongsToMany(Student::class, 'class_student', 'class_id', 'student_id')
@@ -39,28 +39,16 @@ class SchoolClass extends Model
                     ->withTimestamps();
     }
 
-    /** Chá»‰ láº¥y há»c viÃªn Ä‘ang active */
+    /** Chi lay hoc vien dang active */
     public function activeStudents()
     {
         return $this->students()->wherePivot('status', 'active');
     }
 
-    /** Buá»•i há»c cá»§a lá»›p */
+    /** Buoi hoc cua lop */
     public function sessions()
     {
         return $this->hasMany(ClassSession::class, 'class_id')->orderBy('session_number');
     }
 
-    /** BÃ i kiá»ƒm tra cá»§a lá»›p */
-    public function tests()
-    {
-        return $this->hasMany(SchoolTest::class, 'class_id');
-    }
-
-    public function testSessions()
-    {
-        return $this->hasMany(TestSession::class, 'class_id');
-    }}
-
-
-
+}

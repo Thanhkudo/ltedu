@@ -42,13 +42,14 @@ class SessionController extends Controller
         $classId = $session->class_id;
         $this->sessionService->deleteSession($id);
         return redirect()->route('admin.classes.show', $classId)
-            ->with('success', 'Xoá buổi học thành công!');
+            ->with('success', 'Xóa buổi học thành công!');
     }
 
     public function complete(int $id)
     {
         $session = $this->sessionService->markCompleted($id);
         return redirect()->route('admin.classes.show', $session->class_id)
-            ->with('success', 'Đánh dấu buổi học hoàn thành.');
+            ->with('success', 'Danh dau buoi hoc hoan thanh.');
     }
 }
+

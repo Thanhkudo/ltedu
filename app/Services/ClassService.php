@@ -50,19 +50,37 @@ class ClassService
 
     public function deleteClass(int $id): bool
     {
-        return $this->classRepo->delete($id);
+        return DB::transaction(function () use ($id) {
+            $class = $this->classRepo->findById($id);
+
+            $sessionIds = DB::table('sessions')->where('class_id', $id)->pluck('id');
+            $assignmentIds = DB::table('assignments')->whereIn('session_id', $sessionIds)->pluck('id');
+
+            if ($assignmentIds->isNotEmpty()) {
+                DB::table('assignment_submissions')->whereIn('assignment_id', $assignmentIds)->delete();
+                DB::table('assignments')->whereIn('id', $assignmentIds)->delete();
+            }
+
+            if ($sessionIds->isNotEmpty()) {
+                DB::table('sessions')->whereIn('id', $sessionIds)->delete();
+            }
+
+            DB::table('class_student')->where('class_id', $id)->delete();
+
+            return (bool) $class->delete();
+        });
     }
 
     /**
-     * Thêm học viên vào lớp (enrollment).
+     * Them hoc vien vao lop (enrollment).
      * @param int   $classId
-     * @param array $studentIds  Mảng student_id cần thêm
+     * @param array $studentIds  Mang student_id can them
      */
     public function enrollStudents(int $classId, array $studentIds): void
     {
         $class = $this->classRepo->findById($classId);
 
-        // syncWithoutDetaching: không xoá học viên cũ khi thêm mới
+        // syncWithoutDetaching: khong xoa hoc vien cu khi them moi
         $class->students()->syncWithoutDetaching(
             collect($studentIds)->mapWithKeys(fn ($id) => [
                 $id => ['enrolled_at' => now(), 'status' => 'active'],
@@ -71,7 +89,7 @@ class ClassService
     }
 
     /**
-     * Cho học viên rời lớp (drop).
+     * Cho hoc vien roi lop (drop).
      */
     public function dropStudent(int $classId, int $studentId): void
     {
@@ -79,11 +97,12 @@ class ClassService
         $class->students()->updateExistingPivot($studentId, ['status' => 'dropped']);
     }
 
-    // ─── Private helpers ───────────────────────────────────────
+    //  Private helpers 
     private function generateClassCode(): string
     {
         $latest = SchoolClass::orderBy('id', 'desc')->first();
         $nextNumber = $latest ? ($latest->id + 1) : 1;
         return 'LOP-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
     }
+
 }

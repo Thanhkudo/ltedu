@@ -12,15 +12,15 @@ class CreateAssignmentSubmissionsTable extends Migration
             $table->id();
             $table->foreignId('assignment_id')->constrained('assignments')->cascadeOnDelete();
             $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
-            $table->longText('content')->comment('Nội dung bài làm của học viên');
-            $table->string('file_path')->nullable()->comment('Đường dẫn file đính kèm');
+            $table->longText('content')->comment('Noi dung bai lam cua hoc vien');
+            $table->string('file_path')->nullable()->comment('Duong dan file dinh kem');
             $table->decimal('score', 5, 2)->nullable();
-            $table->text('feedback')->nullable()->comment('Nhận xét của giáo viên');
+            $table->text('feedback')->nullable()->comment('Nhan xet cua giao vien');
             $table->enum('status', ['pending', 'submitted', 'graded'])->default('submitted');
             $table->timestamp('submitted_at')->useCurrent();
             $table->timestamps();
 
-            // Unique: mỗi học viên chỉ nộp 1 bài/1 assignment
+            // Unique: moi hoc vien chi nop 1 bai/1 assignment
             $table->unique(['assignment_id', 'student_id']);
         });
     }

@@ -12,8 +12,8 @@ class CreateAssignmentsTable extends Migration
             $table->id();
             $table->foreignId('session_id')->constrained('sessions')->cascadeOnDelete();
             $table->foreignId('exercise_id')->constrained('exercises')->cascadeOnDelete();
-            $table->text('instructions')->nullable()->comment('Hướng dẫn thêm cho buổi học này');
-            $table->dateTime('due_date')->comment('Hạn nộp bài');
+            $table->text('instructions')->nullable()->comment('Huong dan them cho buoi hoc nay');
+            $table->dateTime('due_date')->comment('Han nop bai');
             $table->unsignedSmallInteger('max_score')->default(100);
             $table->timestamps();
         });

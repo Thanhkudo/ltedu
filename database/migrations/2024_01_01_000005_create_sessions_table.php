@@ -11,7 +11,7 @@ class CreateSessionsTable extends Migration
         Schema::create('sessions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('class_id')->constrained('classes')->cascadeOnDelete();
-            $table->unsignedSmallInteger('session_number')->comment('Buổi thứ mấy trong lớp');
+            $table->unsignedSmallInteger('session_number')->comment('Buoi thu may trong lop');
             $table->string('title');
             $table->text('description')->nullable();
             $table->dateTime('session_date');

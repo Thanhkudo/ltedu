@@ -12,7 +12,7 @@ class CreateExercisesTable extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->longText('content')->comment('Nội dung chi tiết bài tập');
+            $table->longText('content')->comment('Noi dung chi tiet bai tap');
             $table->enum('type', ['reading', 'writing', 'listening', 'speaking', 'grammar', 'vocabulary'])->default('writing');
             $table->enum('difficulty', ['easy', 'medium', 'hard'])->default('medium');
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();

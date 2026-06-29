@@ -37,7 +37,7 @@ class ExerciseController extends Controller
             'difficulty'  => 'nullable|in:easy,medium,hard',
         ]);
 
-        // Demo: dùng teacher đầu tiên trong DB
+        // Demo: dung teacher dau tien trong DB
         $creator = User::where('role', 'teacher')->first() ?? User::first();
         $this->exerciseService->createExercise($data, $creator->id);
 
@@ -70,6 +70,7 @@ class ExerciseController extends Controller
     {
         $this->exerciseService->deleteExercise($id);
         return redirect()->route('admin.exercises.index')
-            ->with('success', 'Xoá bài tập thành công!');
+            ->with('success', 'Xóa bài tập thành công!');
     }
 }
+

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Student;
 use App\Models\Assignment;
-use App\Models\TestSession;
 use App\Services\ClassService;
 use Illuminate\Http\Request;
 
@@ -20,7 +19,7 @@ class DashboardController extends Controller
 
     /**
      * GET /
-     * Trang chá»§: cho phÃ©p nháº­p mÃ£ vÃ o há»c, rá»“i hiá»ƒn thá»‹ dashboard.
+     * Trang chu: cho phep nhap ma vao hoc, roi hien thi dashboard.
      */
     public function index(Request $request)
     {
@@ -35,33 +34,34 @@ class DashboardController extends Controller
             'classes.sessions',
         ])->findOrFail($studentId);
 
-        // BÃ i táº­p Ä‘Ã£ giao theo cÃ¡c lá»›p Ä‘ang há»c (khÃ´ng giá»›i háº¡n háº¡n ná»™p)
+        // Bai tap da giao theo cac lop dang hoc (khong gioi han han nop)
         $classIds = $student->classes->pluck('id');
 
         $assignmentCount = Assignment::query()
             ->whereHas('session', fn ($q) => $q->whereIn('class_id', $classIds))
             ->count();
 
-        $upcomingAssignments = Assignment::with(['session.schoolClass', 'exercise'])
+        $completedAssignmentCount = Assignment::query()
+            ->whereHas('session', fn ($q) => $q->whereIn('class_id', $classIds))
+            ->whereHas('submissions', fn ($q) => $q->where('student_id', $studentId))
+            ->count();
+
+        $upcomingAssignments = Assignment::with([
+                'session.schoolClass',
+                'exercise',
+                'submissions' => fn ($q) => $q->where('student_id', $studentId)->latest('submitted_at'),
+            ])
             ->whereHas('session', fn ($q) => $q->whereIn('class_id', $classIds))
             ->orderByDesc('created_at')
             ->limit(8)
             ->get();
 
-        // Phiên kiểm tra đang mở
-        $activeTests = TestSession::with(['test.questions', 'schoolClass'])
-            ->whereIn('class_id', $classIds)
-            ->where('status', 'open')
-            ->where('starts_at', '<=', now())
-            ->where('ends_at', '>=', now())
-            ->get();
-
-        return view('student.dashboard', compact('student', 'upcomingAssignments', 'assignmentCount', 'activeTests'));
+        return view('student.dashboard', compact('student', 'upcomingAssignments', 'assignmentCount', 'completedAssignmentCount'));
     }
 
     /**
      * POST /pick-student
-     * Há»c viÃªn nháº­p mÃ£ vÃ o há»c Ä‘á»ƒ lÆ°u session.
+     * Hoc vien nhap ma vao hoc de luu session.
      */
     public function pickStudent(Request $request)
     {
@@ -75,7 +75,7 @@ class DashboardController extends Controller
 
         if (!$student) {
             return back()->withErrors([
-                'entry_code' => 'MÃ£ vÃ o há»c khÃ´ng Ä‘Ãºng. Vui lÃ²ng kiá»ƒm tra láº¡i.',
+                'entry_code' => 'Ma vao hoc khong dung. Vui long kiem tra lai.',
             ])->withInput();
         }
 
@@ -85,7 +85,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * POST /logout-student â€” Äáº·t láº¡i há»c viÃªn Ä‘ang xem (demo).
+     * POST /logout-student a" Dat lai hoc vien dang xem (demo).
      */
     public function logout(Request $request)
     {

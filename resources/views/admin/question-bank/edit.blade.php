@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 @section('title', 'Sửa câu hỏi')
 @section('page-title', 'Sửa câu hỏi trong kho')
 @section('page-actions')
@@ -8,6 +8,7 @@
 @section('content')
 @php
     $interactionType = old('interaction_type', $question->interaction_type ?? 'normal');
+    $questionType = old('question_type', $interactionType === 'normal' ? ($question->answer_mode ?? 'select') : $interactionType);
     $interactionData = $question->interaction_data ?? [];
     $orderingItems = old('ordering_items', data_get($interactionData, 'items', ['', '', '']));
     $pairs = data_get($interactionData, 'pairs', []);
@@ -32,20 +33,13 @@
                             <option value="{{ $cat->id }}" {{ (string) old('category_id', $question->category_id) === (string) $cat->id ? 'selected' : '' }}>L{{ $cat->grade_level }} - {{ ucfirst($cat->skill_type) }} - {{ $cat->name }}</option>
                         @endforeach
                     </select>
-                </div>
-                <div class="col-md-3">
+                </div>                <div class="col-md-3">
                     <label class="form-label fw-semibold">Kiểu câu hỏi</label>
-                    <select name="interaction_type" id="interaction_type" class="form-select" onchange="toggleInteractionType()">
-                        <option value="normal" {{ $interactionType === 'normal' ? 'selected' : '' }}>Bình thường</option>
-                        <option value="ordering" {{ $interactionType === 'ordering' ? 'selected' : '' }}>Sắp xếp đáp án</option>
-                        <option value="matching" {{ $interactionType === 'matching' ? 'selected' : '' }}>Nối đáp án</option>
-                    </select>
-                </div>
-                <div class="col-md-3 normal-only">
-                    <label class="form-label fw-semibold">Kiểu trả lời</label>
-                    <select name="answer_mode" id="answer_mode" class="form-select" onchange="toggleAnswerMode()">
-                        <option value="select" {{ old('answer_mode', $question->answer_mode) === 'select' ? 'selected' : '' }}>Chọn đáp án</option>
-                        <option value="input" {{ old('answer_mode', $question->answer_mode) === 'input' ? 'selected' : '' }}>Nhập đáp án</option>
+                    <select name="question_type" id="question_type" class="form-select" onchange="toggleQuestionType()">
+                        <option value="select" {{ $questionType === 'select' ? 'selected' : '' }}>Chọn đáp án</option>
+                        <option value="input" {{ $questionType === 'input' ? 'selected' : '' }}>Nhập đáp án</option>
+                        <option value="matching" {{ $questionType === 'matching' ? 'selected' : '' }}>Nối đáp án</option>
+                        <option value="ordering" {{ $questionType === 'ordering' ? 'selected' : '' }}>Sắp xếp đáp án</option>
                     </select>
                 </div>
                 <div class="col-md-4">
@@ -56,23 +50,37 @@
                         <option value="listening" {{ old('context_type', $question->context_type) === 'listening' ? 'selected' : '' }}>Nghe</option>
                     </select>
                 </div>
+                <div class="col-md-8">
+                    <label class="form-label fw-semibold">Nhóm bài đọc/nghe</label>
+                    <select name="group_id" id="group_id" class="form-select" onchange="applyQuestionGroup()">
+                        <option value="">Không dùng nhóm</option>
+                        @foreach($groups as $group)
+                            <option value="{{ $group->id }}"
+                                data-category="{{ $group->category_id }}"
+                                data-type="{{ $group->type }}"
+                                {{ (string) old('group_id', $question->group_id) === (string) $group->id ? 'selected' : '' }}>
+                                {{ $group->type === 'reading' ? 'Bài đọc' : 'Bài nghe' }} - {{ $group->title ?: 'Nhóm #' . $group->id }}
+                                (Lớp {{ $group->category->grade_level ?? '?' }} - {{ $group->category->name ?? '-' }})
+                            </option>
+                        @endforeach
+                    </select>
+                    <div class="form-text">Nếu chọn nhóm, hệ thống sẽ lấy danh mục, đoạn văn hoặc audio từ nhóm.</div>
+                </div>
                 <div class="col-md-5">
                     <label class="form-label fw-semibold">Tiêu đề</label>
                     <input type="text" name="title" class="form-control" value="{{ old('title', $question->title) }}">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold">Độ khó</label>
-                    <select name="difficulty" class="form-select">
-                        @foreach(['easy','medium','hard'] as $df)
-                            <option value="{{ $df }}" {{ old('difficulty', $question->difficulty) === $df ? 'selected' : '' }}>{{ ucfirst($df) }}</option>
-                        @endforeach
-                    </select>
                 </div>
             </div>
 
             <div class="mt-3"><label class="form-label fw-semibold">Nội dung câu hỏi</label><textarea name="question_text" rows="3" class="form-control" required>{{ old('question_text', $question->question_text) }}</textarea></div>
             <div class="mt-3" id="passageWrap"><label class="form-label fw-semibold">Đoạn văn</label><textarea name="passage" rows="4" class="form-control">{{ old('passage', $question->passage) }}</textarea></div>
-            <div class="mt-3" id="audioWrap"><label class="form-label fw-semibold">Link audio</label><input type="url" name="audio_url" class="form-control" value="{{ old('audio_url', $question->audio_url) }}"></div>
+            <div class="mt-3" id="audioWrap">
+                <label class="form-label fw-semibold">File audio</label>
+                <div class="input-group">
+                    <input type="text" name="audio_url" id="audio_url" class="form-control" value="{{ old('audio_url', $question->audio_url) }}" readonly>
+                    <button type="button" class="btn btn-outline-primary" onclick="chooseCkfinderFile('audio_url', 'Audios')">Chọn từ CKFinder</button>
+                </div>
+            </div>
 
             <div class="mt-3 normal-only" id="selectOptionsWrap">
                 <label class="form-label fw-semibold">Các lựa chọn</label>
@@ -106,7 +114,12 @@
                             <div class="col-md-4"><input type="text" name="matching_left[]" class="form-control" placeholder="Vế trái" value="{{ $pair['left'] ?? '' }}"></div>
                             <div class="col-md-2"><select name="matching_right_type[]" class="form-select" onchange="toggleMatchingRight(this)"><option value="text" {{ ($pair['right_type'] ?? 'text') === 'text' ? 'selected' : '' }}>Chữ</option><option value="image" {{ ($pair['right_type'] ?? 'text') === 'image' ? 'selected' : '' }}>Ảnh</option></select></div>
                             <div class="col-md-6 right-text"><input type="text" name="matching_right_text[]" class="form-control" placeholder="Vế phải bằng chữ" value="{{ ($pair['right_type'] ?? 'text') === 'text' ? ($pair['right'] ?? '') : '' }}"></div>
-                            <div class="col-md-6 right-image"><input type="url" name="matching_right_image[]" class="form-control" placeholder="Link ảnh https://..." value="{{ ($pair['right_type'] ?? 'text') === 'image' ? ($pair['right'] ?? '') : '' }}"></div>
+                            <div class="col-md-6 right-image">
+                                <div class="input-group">
+                                    <input type="text" name="matching_right_image[]" class="form-control ckfinder-image-input" placeholder="/data/images/..." value="{{ ($pair['right_type'] ?? 'text') === 'image' ? ($pair['right'] ?? '') : '' }}" readonly>
+                                    <button type="button" class="btn btn-outline-primary" onclick="chooseCkfinderSiblingFile(this, 'Images')">Chọn ảnh</button>
+                                </div>
+                            </div>
                         </div>
                     @endforeach
                 </div>
@@ -121,13 +134,35 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('js/ckfinder/ckfinder.js') }}"></script>
+<script>CKFinder.config({ connectorPath: @json(route('ckfinder_connector')) });</script>
 <script>
-function toggleAnswerMode(){const mode=document.getElementById('answer_mode').value;document.getElementById('selectOptionsWrap').classList.toggle('d-none',mode!=='select');document.getElementById('inputAnswerWrap').classList.toggle('d-none',mode!=='input');}
+function chooseCkfinderFile(inputId, resourceType){
+    if(typeof CKFinder === 'undefined'){alert('CKFinder chưa được tải.');return;}
+    CKFinder.popup({
+        chooseFiles:true,
+        resourceType:resourceType,
+        connectorPath:'{{ route('ckfinder_connector') }}',
+        onInit:function(finder){
+            finder.on('files:choose',function(evt){
+                const file=evt.data.files.first();
+                document.getElementById(inputId).value=file.getUrl();
+            });
+        }
+    });
+}
+function chooseCkfinderSiblingFile(button, resourceType){
+    const input=button.closest('.input-group').querySelector('input');
+    if(!input)return;
+    if(!input.id){input.id='ckfinder_file_'+Math.random().toString(36).slice(2);}
+    chooseCkfinderFile(input.id, resourceType);
+}
 function toggleContext(){const context=document.getElementById('context_type').value;document.getElementById('passageWrap').classList.toggle('d-none',context!=='reading');document.getElementById('audioWrap').classList.toggle('d-none',context!=='listening');}
-function toggleInteractionType(){const type=document.getElementById('interaction_type').value;document.querySelectorAll('.normal-only').forEach(el=>el.classList.toggle('d-none',type!=='normal'));document.getElementById('orderingWrap').classList.toggle('d-none',type!=='ordering');document.getElementById('matchingWrap').classList.toggle('d-none',type!=='matching');toggleAnswerMode();}
-function addOrderingRow(){const input=document.createElement('input');input.type='text';input.name='ordering_items[]';input.className='form-control mb-2';document.getElementById('orderingRows').appendChild(input);}
+function applyQuestionGroup(){const select=document.getElementById('group_id');const option=select.options[select.selectedIndex];if(!option||!option.value){toggleContext();return;}const category=document.querySelector('[name="category_id"]');const context=document.getElementById('context_type');if(category&&option.dataset.category)category.value=option.dataset.category;if(context&&option.dataset.type)context.value=option.dataset.type;toggleContext();}
+function toggleQuestionType(){const type=document.getElementById('question_type').value;document.getElementById('selectOptionsWrap').classList.toggle('d-none',type!=='select');document.getElementById('inputAnswerWrap').classList.toggle('d-none',type!=='input');document.getElementById('orderingWrap').classList.toggle('d-none',type!=='ordering');document.getElementById('matchingWrap').classList.toggle('d-none',type!=='matching');}
+function addOrderingRow(){const input=document.createElement('input');input.type='text';input.name='ordering_items[]';input.className='form-control mb-2';input.placeholder='Mục tiếp theo';document.getElementById('orderingRows').appendChild(input);}
 function toggleMatchingRight(select){const row=select.closest('.matching-row');row.querySelector('.right-text').classList.toggle('d-none',select.value!=='text');row.querySelector('.right-image').classList.toggle('d-none',select.value!=='image');}
-function addMatchingRow(){const row=document.createElement('div');row.className='row g-2 mb-2 matching-row';row.innerHTML=`<div class="col-md-4"><input type="text" name="matching_left[]" class="form-control" placeholder="Vế trái"></div><div class="col-md-2"><select name="matching_right_type[]" class="form-select" onchange="toggleMatchingRight(this)"><option value="text">Chữ</option><option value="image">Ảnh</option></select></div><div class="col-md-6 right-text"><input type="text" name="matching_right_text[]" class="form-control" placeholder="Vế phải bằng chữ"></div><div class="col-md-6 right-image d-none"><input type="url" name="matching_right_image[]" class="form-control" placeholder="Link ảnh https://..."></div>`;document.getElementById('matchingRows').appendChild(row);}
-document.querySelectorAll('[name="matching_right_type[]"]').forEach(toggleMatchingRight);toggleInteractionType();toggleContext();
+function addMatchingRow(){const row=document.createElement('div');row.className='row g-2 mb-2 matching-row';row.innerHTML=`<div class="col-md-4"><input type="text" name="matching_left[]" class="form-control" placeholder="Vế trái"></div><div class="col-md-2"><select name="matching_right_type[]" class="form-select" onchange="toggleMatchingRight(this)"><option value="text">Chữ</option><option value="image">Ảnh</option></select></div><div class="col-md-6 right-text"><input type="text" name="matching_right_text[]" class="form-control" placeholder="Vế phải bằng chữ"></div><div class="col-md-6 right-image d-none"><div class="input-group"><input type="text" name="matching_right_image[]" class="form-control ckfinder-image-input" placeholder="/data/images/..." readonly><button type="button" class="btn btn-outline-primary" onclick="chooseCkfinderSiblingFile(this, 'Images')">Chọn ảnh</button></div></div>`;document.getElementById('matchingRows').appendChild(row);}
+document.querySelectorAll('[name="matching_right_type[]"]').forEach(toggleMatchingRight);toggleQuestionType();applyQuestionGroup();
 </script>
 @endpush

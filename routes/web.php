@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GuideController;
 use App\Http\Controllers\Student;
 use App\Http\Controllers\Admin;
 
@@ -10,22 +11,28 @@ use App\Http\Controllers\Admin;
 |--------------------------------------------------------------------------
 */
 
-// â”€â”€ Student / Public routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Student / Public routes
 Route::get('/', [Student\DashboardController::class, 'index'])->name('student.home');
 Route::post('/pick-student', [Student\DashboardController::class, 'pickStudent'])->name('student.pick');
 Route::post('/logout-student', [Student\DashboardController::class, 'logout'])->name('student.logout');
+Route::get('/huong-dan', [GuideController::class, 'student'])->name('guide');
+
+Route::get('/language/{locale}', function (string $locale) {
+    abort_unless(in_array($locale, ['en', 'vi'], true), 404);
+
+    session(['locale' => $locale]);
+
+    return redirect()->back();
+})->name('language.switch');
 
 Route::get('/classes/{id}', [Student\StudentClassController::class, 'show'])->name('student.classes.show');
 
 Route::get('/assignments/{id}', [Student\StudentAssignmentController::class, 'show'])->name('student.assignments.show');
+Route::get('/assignments/{id}/practice', [Student\StudentAssignmentController::class, 'practice'])->name('student.assignments.practice');
 Route::post('/assignments/{id}/submit', [Student\StudentAssignmentController::class, 'submit'])->name('student.assignments.submit');
 
-Route::get('/tests/{id}', [Student\StudentTestController::class, 'show'])->name('student.tests.show');
-Route::post('/tests/{id}/submit', [Student\StudentTestController::class, 'submit'])->name('student.tests.submit');
-Route::get('/results/{submissionId}', [Student\StudentTestController::class, 'result'])->name('student.tests.result');
-
-// â”€â”€ Admin routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-Route::prefix('admin')->name('admin.')->group(function () {
+// Admin routes
+Route::prefix('admin')->name('admin.')->middleware('admin.locale')->group(function () {
 
     // Auth
     Route::middleware('guest')->group(function () {
@@ -41,6 +48,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('admin.access')->group(function () {
 
     Route::get('/', [Admin\DashboardController::class, 'index'])->name('dashboard')->middleware('admin.module:dashboard');
+    Route::get('huong-dan', [GuideController::class, 'admin'])->name('guide');
+
+    // Users
+    Route::resource('users', Admin\UserController::class)->middleware('admin.access');
 
     // Students
     Route::resource('students', Admin\StudentController::class)->middleware('admin.module:students');
@@ -72,12 +83,27 @@ Route::prefix('admin')->name('admin.')->group(function () {
         ->name('question-bank.create')->middleware('admin.module:question-bank');
     Route::post('question-bank', [Admin\QuestionBankController::class, 'store'])
         ->name('question-bank.store')->middleware('admin.module:question-bank');
+    Route::get('question-bank/import', [Admin\QuestionBankController::class, 'importForm'])
+        ->name('question-bank.import')->middleware('admin.module:question-bank');
+    Route::get('question-bank/import/template', [Admin\QuestionBankController::class, 'downloadImportTemplate'])
+        ->name('question-bank.import-template')->middleware('admin.module:question-bank');
+    Route::post('question-bank/import', [Admin\QuestionBankController::class, 'import'])
+        ->name('question-bank.import.store')->middleware('admin.module:question-bank');
     Route::get('question-bank/{id}/edit', [Admin\QuestionBankController::class, 'edit'])
         ->name('question-bank.edit')->middleware('admin.module:question-bank');
     Route::put('question-bank/{id}', [Admin\QuestionBankController::class, 'update'])
         ->name('question-bank.update')->middleware('admin.module:question-bank');
     Route::delete('question-bank/{id}', [Admin\QuestionBankController::class, 'destroy'])
         ->name('question-bank.destroy')->middleware('admin.module:question-bank');
+
+    Route::get('question-groups', [Admin\QuestionBankController::class, 'groups'])
+        ->name('question-groups.index')->middleware('admin.module:question-bank');
+    Route::post('question-groups', [Admin\QuestionBankController::class, 'storeGroup'])
+        ->name('question-groups.store')->middleware('admin.module:question-bank');
+    Route::put('question-groups/{id}', [Admin\QuestionBankController::class, 'updateGroup'])
+        ->name('question-groups.update')->middleware('admin.module:question-bank');
+    Route::delete('question-groups/{id}', [Admin\QuestionBankController::class, 'destroyGroup'])
+        ->name('question-groups.destroy')->middleware('admin.module:question-bank');
 
     // Question categories
     Route::get('question-categories', [Admin\QuestionBankController::class, 'categories'])
@@ -92,3 +118,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 });
 
+Route::middleware('admin.access')->group(function () {
+    Route::any('/ckfinder/connector', '\CKSource\CKFinderBridge\Controller\CKFinderController@requestAction')
+        ->name('ckfinder_connector');
+    Route::any('/ckfinder/browser', '\CKSource\CKFinderBridge\Controller\CKFinderController@browserAction')
+        ->name('ckfinder_browser');
+});

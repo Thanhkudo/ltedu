@@ -62,11 +62,11 @@ class ClassController extends Controller
     {
         $this->classService->deleteClass($id);
         return redirect()->route('admin.classes.index')
-            ->with('success', 'Xoá lớp học thành công!');
+            ->with('success', 'Xóa lớp học thành công!');
     }
 
     /**
-     * POST /admin/classes/{id}/enroll — Thêm học viên vào lớp.
+     * POST /admin/classes/{id}/enroll - Them hoc vien vao lop.
      */
     public function enroll(Request $request, int $id)
     {
@@ -90,3 +90,4 @@ class ClassController extends Controller
             ->with('success', 'Học viên đã rời lớp.');
     }
 }
+

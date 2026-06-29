@@ -18,13 +18,13 @@ class Student extends Model
         'date_of_birth' => 'date',
     ];
 
-    // ─── Relations ─────────────────────────────────────────────
+    //  Relations 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /** Danh sách lớp học viên đang/đã tham gia */
+    /** Danh sach lop hoc vien dang/da tham gia */
     public function classes()
     {
         return $this->belongsToMany(SchoolClass::class, 'class_student', 'student_id', 'class_id')
@@ -32,15 +32,10 @@ class Student extends Model
                     ->withTimestamps();
     }
 
-    /** Bài tập đã nộp */
+    /** Bai tap da nop */
     public function assignmentSubmissions()
     {
         return $this->hasMany(AssignmentSubmission::class);
     }
 
-    /** Bài kiểm tra đã làm */
-    public function testSubmissions()
-    {
-        return $this->hasMany(TestSubmission::class);
-    }
 }

@@ -35,7 +35,7 @@ class AuthController extends Controller
 
         if (!Auth::attempt($credentials, $request->boolean('remember'))) {
             return back()->withErrors([
-                'email' => 'Email hoặc mật khẩu không đúng.',
+                'email' => 'Email hoac mat khau khong dung.',
             ])->withInput($request->only('email'));
         }
 
@@ -47,7 +47,7 @@ class AuthController extends Controller
             $request->session()->regenerateToken();
 
             return back()->withErrors([
-                'email' => 'Tài khoản này không có quyền truy cập trang quản trị.',
+                'email' => 'Tai khoan nay khong co quyen truy cap trang quan tri.',
             ]);
         }
 
@@ -67,11 +67,11 @@ class AuthController extends Controller
 
         if (!Auth::check()) {
             return redirect()->route('admin.login.form')
-                ->with('error', 'Hệ thống đã có tài khoản admin. Chỉ admin hiện tại mới được tạo thêm tài khoản quản trị.');
+                ->with('error', 'He thong da co tai khoan admin. Chi admin hien tai moi duoc tao them tai khoan quan tri.');
         }
 
         if (!Auth::user()->isAdmin()) {
-            abort(403, 'Chỉ admin mới có quyền tạo tài khoản quản trị mới.');
+            abort(403, 'Chi admin moi co quyen tao tai khoan quan tri moi.');
         }
 
         return view('admin.auth.register', [
@@ -85,7 +85,7 @@ class AuthController extends Controller
         $hasAdmin = $this->hasAdminAccount();
 
         if ($hasAdmin && (!Auth::check() || !Auth::user()->isAdmin())) {
-            abort(403, 'Chỉ admin mới có quyền tạo tài khoản quản trị mới.');
+            abort(403, 'Chi admin moi co quyen tao tai khoan quan tri moi.');
         }
 
         $rules = [
@@ -128,3 +128,4 @@ class AuthController extends Controller
         return redirect()->route('admin.login.form');
     }
 }
+

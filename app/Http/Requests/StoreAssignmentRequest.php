@@ -13,13 +13,13 @@ class StoreAssignmentRequest extends FormRequest
         return [
             'session_id'   => 'required|exists:sessions,id',
             'instructions' => 'nullable|string',
-            'due_date'     => 'required|date|after:now',
+            'due_date'     => 'nullable|date|after:now',
             'max_score'    => 'nullable|integer|min:1|max:1000',
 
             'grade_level'  => 'required|integer|in:6,7,8,9',
-            'skill_type'   => 'required|in:listening,speaking,reading,writing,grammar,vocabulary',
             'question_configs' => 'required|array|min:1',
             'question_configs.*.category_id' => 'nullable|exists:question_categories,id',
+            'question_configs.*.question_type' => 'nullable|in:select,input,matching,ordering',
             'question_configs.*.answer_mode' => 'nullable|in:select,input',
             'question_configs.*.context_type' => 'nullable|in:normal,reading,listening',
             'question_configs.*.interaction_type' => 'nullable|in:normal,ordering,matching',

@@ -19,7 +19,7 @@ class StoreQuestionRequest extends FormRequest
             $correctIndex = (int) $this->input('correct_option', 0);
 
             if ($this->input('question_type') === 'true_false') {
-                $options = ['ÄÃºng', 'Sai'];
+                $options = ['Dung', 'Sai'];
             }
 
             $this->merge([

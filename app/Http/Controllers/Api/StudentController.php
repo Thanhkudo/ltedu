@@ -20,7 +20,7 @@ class StudentController extends Controller
 
     /**
      * GET /api/students
-     * Danh sách học viên (có tìm kiếm).
+     * Danh sach hoc vien (co tim kiem).
      */
     public function index(Request $request): JsonResponse
     {
@@ -34,7 +34,7 @@ class StudentController extends Controller
     public function store(StoreStudentRequest $request): JsonResponse
     {
         $student = $this->studentService->createStudent($request->validated());
-        return response()->json(['data' => $student, 'message' => 'Tạo học viên thành công.'], 201);
+        return response()->json(['data' => $student, 'message' => 'Tao hoc vien thanh cong.'], 201);
     }
 
     /**
@@ -52,7 +52,7 @@ class StudentController extends Controller
     public function update(UpdateStudentRequest $request, int $id): JsonResponse
     {
         $student = $this->studentService->updateStudent($id, $request->validated());
-        return response()->json(['data' => $student, 'message' => 'Cập nhật thành công.']);
+        return response()->json(['data' => $student, 'message' => 'Cap nhat thanh cong.']);
     }
 
     /**
@@ -61,6 +61,6 @@ class StudentController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $this->studentService->deleteStudent($id);
-        return response()->json(['message' => 'Xoá học viên thành công.']);
+        return response()->json(['message' => 'Xoa hoc vien thanh cong.']);
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class AssignmentService
 {
     /**
-     * Giao bài tập cho một buổi học.
+     * Giao bai tap cho mot buoi hoc.
      */
     public function assignExercise(array $data): Assignment
     {
@@ -36,7 +36,7 @@ class AssignmentService
     }
 
     /**
-     * Học viên nộp bài tập.
+     * Hoc vien nop bai tap.
      */
     public function submitAssignment(int $assignmentId, int $studentId, array $data): AssignmentSubmission
     {
@@ -54,8 +54,9 @@ class AssignmentService
                 ->where('student_id', $studentId)
                 ->orderByDesc('submitted_at')
                 ->orderByDesc('id')
-                ->skip(3)
-                ->pluck('id');
+                ->pluck('id')
+                ->slice(3)
+                ->values();
 
             if ($obsoleteIds->isNotEmpty()) {
                 AssignmentSubmission::whereIn('id', $obsoleteIds)->delete();
@@ -66,14 +67,14 @@ class AssignmentService
     }
 
     /**
-     * Giáo viên chấm bài.
+     * Giao vien cham bai.
      */
     public function gradeSubmission(int $submissionId, float $score, ?string $feedback = null): AssignmentSubmission
     {
         $submission = AssignmentSubmission::findOrFail($submissionId);
 
         $assignment = $submission->assignment;
-        abort_if($score > $assignment->max_score, 422, "Điểm không được vượt quá {$assignment->max_score}.");
+        abort_if($score > $assignment->max_score, 422, "Diem khong duoc vuot qua {$assignment->max_score}.");
 
         $submission->update([
             'score'    => $score,
@@ -85,7 +86,7 @@ class AssignmentService
     }
 
     /**
-     * Lấy danh sách bài nộp của một assignment (để giáo viên xem).
+     * Lay danh sach bai nop cua mot assignment (de giao vien xem).
      */
     public function getSubmissionsForAssignment(int $assignmentId)
     {

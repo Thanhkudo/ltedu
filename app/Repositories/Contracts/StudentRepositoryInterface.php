@@ -4,12 +4,12 @@ namespace App\Repositories\Contracts;
 
 interface StudentRepositoryInterface extends RepositoryInterface
 {
-    /** Tìm kiếm học viên theo tên, email hoặc mã */
+    /** Tim kiem hoc vien theo ten, email hoac ma */
     public function search(string $keyword, int $perPage = 15);
 
-    /** Lấy danh sách học viên của một lớp */
+    /** Lay danh sach hoc vien cua mot lop */
     public function getByClass(int $classId, array $relations = []);
 
-    /** Tìm theo mã học viên */
+    /** Tim theo ma hoc vien */
     public function findByCode(string $code);
 }

@@ -11,6 +11,7 @@ class QuestionBankItem extends Model
 
     protected $fillable = [
         'category_id',
+        'group_id',
         'title',
         'question_text',
         'passage',
@@ -34,6 +35,11 @@ class QuestionBankItem extends Model
     public function category()
     {
         return $this->belongsTo(QuestionCategory::class, 'category_id');
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(QuestionGroup::class, 'group_id');
     }
 
     public function options()

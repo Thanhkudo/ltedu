@@ -4,9 +4,9 @@ namespace App\Repositories\Contracts;
 
 interface ClassRepositoryInterface extends RepositoryInterface
 {
-    /** Lấy các lớp đang active */
+    /** Lay cac lop dang active */
     public function getActive(array $relations = []);
 
-    /** Lấy lớp theo giáo viên */
+    /** Lay lop theo giao vien */
     public function getByTeacher(int $teacherId, array $relations = []);
 }

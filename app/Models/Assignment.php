@@ -20,7 +20,7 @@ class Assignment extends Model
         'generation_config' => 'array',
     ];
 
-    // ─── Relations ─────────────────────────────────────────────
+    //  Relations
     public function session()
     {
         return $this->belongsTo(ClassSession::class, 'session_id');
@@ -31,13 +31,13 @@ class Assignment extends Model
         return $this->belongsTo(Exercise::class);
     }
 
-    /** Bài làm của học viên cho assignment này */
+    /** Bai lam cua hoc vien cho assignment nay */
     public function submissions()
     {
         return $this->hasMany(AssignmentSubmission::class);
     }
 
-    /** Kiểm tra học viên đã nộp chưa */
+    /** Kiem tra hoc vien da nop chua */
     public function submissionOf(int $studentId): ?AssignmentSubmission
     {
         return $this->submissions()
@@ -49,7 +49,7 @@ class Assignment extends Model
 
     public function isPastDue(): bool
     {
-        return $this->due_date->isPast();
+        return $this->due_date ? $this->due_date->isPast() : false;
     }
 
     public function isGeneratedFromQuestionBank(): bool

@@ -32,7 +32,7 @@ class ClassController extends Controller
     public function store(StoreClassRequest $request): JsonResponse
     {
         $class = $this->classService->createClass($request->validated());
-        return response()->json(['data' => $class, 'message' => 'Tạo lớp học thành công.'], 201);
+        return response()->json(['data' => $class, 'message' => 'Tao lop hoc thanh cong.'], 201);
     }
 
     /**
@@ -50,7 +50,7 @@ class ClassController extends Controller
     public function update(StoreClassRequest $request, int $id): JsonResponse
     {
         $class = $this->classService->updateClass($id, $request->validated());
-        return response()->json(['data' => $class, 'message' => 'Cập nhật lớp học thành công.']);
+        return response()->json(['data' => $class, 'message' => 'Cap nhat lop hoc thanh cong.']);
     }
 
     /**
@@ -59,12 +59,12 @@ class ClassController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $this->classService->deleteClass($id);
-        return response()->json(['message' => 'Xoá lớp học thành công.']);
+        return response()->json(['message' => 'Xoa lop hoc thanh cong.']);
     }
 
     /**
      * POST /api/classes/{id}/enroll
-     * Thêm học viên vào lớp.
+     * Them hoc vien vao lop.
      * Body: { "student_ids": [1, 2, 3] }
      */
     public function enroll(Request $request, int $id): JsonResponse
@@ -75,26 +75,26 @@ class ClassController extends Controller
         ]);
 
         $this->classService->enrollStudents($id, $request->student_ids);
-        return response()->json(['message' => 'Thêm học viên vào lớp thành công.']);
+        return response()->json(['message' => 'Them hoc vien vao lop thanh cong.']);
     }
 
     /**
      * DELETE /api/classes/{id}/students/{studentId}
-     * Cho học viên rời lớp.
+     * Cho hoc vien roi lop.
      */
     public function dropStudent(int $id, int $studentId): JsonResponse
     {
         $this->classService->dropStudent($id, $studentId);
-        return response()->json(['message' => 'Học viên đã rời lớp.']);
+        return response()->json(['message' => 'Hoc vien da roi lop.']);
     }
 
     /**
      * GET /api/classes/{id}/students
-     * Danh sách học viên trong lớp.
+     * Danh sach hoc vien trong lop.
      */
     public function students(int $id): JsonResponse
     {
-        // Dùng StudentService để lấy học viên theo lớp
+        // Dung StudentService de lay hoc vien theo lop
         $students = app(\App\Services\StudentService::class)->getStudentsByClass($id);
         return response()->json(['data' => $students]);
     }

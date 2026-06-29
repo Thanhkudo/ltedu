@@ -13,7 +13,8 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.0",
-        "laravel/tinker": "^2.0"
+        "laravel/tinker": "^2.0",
+        "maatwebsite/excel": ">=3.1 <4.0"
     },
     "require-dev": {
         "facade/ignition": "^2.3.6",
@@ -35,8 +36,14 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/",
+            "CKSource\\CKFinderBridge\\": "vendor/ckfinder/ckfinder-laravel-package/src/",
+            "CKSource\\CKFinder\\": "vendor/ckfinder/ckfinder-laravel-package/_connector/",
+            "League\\Flysystem\\Cached\\": "vendor/league/flysystem-cached-adapter/src/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
+        },
+        "psr-0": {
+            "Pimple": "vendor/pimple/pimple/src/"
         }
     },
     "autoload-dev": {

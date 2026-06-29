@@ -5,6 +5,12 @@
     <a href="{{ route('admin.question-categories.index') }}" class="btn btn-sm btn-outline-secondary">
         <i class="bi bi-tags me-1"></i>Danh mục
     </a>
+    <a href="{{ route('admin.question-groups.index') }}" class="btn btn-sm btn-outline-info">
+        <i class="bi bi-collection me-1"></i>Nhóm bài đọc/nghe
+    </a>
+    <a href="{{ route('admin.question-bank.import') }}" class="btn btn-sm btn-outline-success">
+        <i class="bi bi-upload me-1"></i>Import
+    </a>
     <a href="{{ route('admin.question-bank.create') }}" class="btn btn-sm btn-primary">
         <i class="bi bi-plus-lg me-1"></i>Thêm câu hỏi
     </a>
@@ -44,10 +50,12 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <select name="answer_mode" class="form-select">
-                    <option value="">Kiểu trả lời</option>
-                    <option value="select" {{ request('answer_mode') === 'select' ? 'selected' : '' }}>Chọn đáp án</option>
-                    <option value="input" {{ request('answer_mode') === 'input' ? 'selected' : '' }}>Nhập đáp án</option>
+                <select name="question_type" class="form-select">
+                    <option value="">Kiểu câu hỏi</option>
+                    <option value="select" {{ request('question_type') === 'select' ? 'selected' : '' }}>Chọn đáp án</option>
+                    <option value="input" {{ request('question_type') === 'input' ? 'selected' : '' }}>Nhập đáp án</option>
+                    <option value="matching" {{ request('question_type') === 'matching' ? 'selected' : '' }}>Nối đáp án</option>
+                    <option value="ordering" {{ request('question_type') === 'ordering' ? 'selected' : '' }}>Sắp xếp đáp án</option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -75,7 +83,6 @@
                     <th>Danh mục</th>
                     <th>Kiểu</th>
                     <th>Ngữ cảnh</th>
-                    <th>Độ khó</th>
                     <th style="width: 130px"></th>
                 </tr>
             </thead>
@@ -84,22 +91,36 @@
                     <tr>
                         <td>
                             <div class="fw-semibold">{{ \Illuminate\Support\Str::limit($question->question_text, 120) }}</div>
+                            @if($question->group)
+                                <small class="d-block text-primary">
+                                    <i class="bi bi-collection me-1"></i>{{ $question->group->title ?: ($question->group->type === 'reading' ? 'Bài đọc' : 'Bài nghe') }}
+                                </small>
+                            @endif
                             @if($question->answer_mode === 'select')
                                 <small class="text-muted">{{ $question->options->count() }} lựa chọn</small>
                             @endif
                         </td>
                         <td>
-                            <div class="small fw-semibold">{{ $question->category->name ?? '—' }}</div>
+                            <div class="small fw-semibold">{{ $question->category->name ?? '-' }}</div>
                             <div class="small text-muted">L{{ $question->category->grade_level ?? '?' }} - {{ ucfirst($question->category->skill_type ?? '') }}</div>
                         </td>
-                        <td>{{ $question->answer_mode === 'select' ? 'Chọn đáp án' : 'Nhập đáp án' }}</td>
+                        <td>
+                            @if(($question->interaction_type ?? 'normal') === 'matching')
+                                Nối đáp án
+                            @elseif(($question->interaction_type ?? 'normal') === 'ordering')
+                                Sắp xếp đáp án
+                            @elseif($question->answer_mode === 'select')
+                                Chọn đáp án
+                            @else
+                                Nhập đáp án
+                            @endif
+                        </td>
                         <td>
                             @if($question->context_type === 'reading') Đọc hiểu
                             @elseif($question->context_type === 'listening') Nghe
                             @else Bình thường
                             @endif
                         </td>
-                        <td>{{ ucfirst($question->difficulty) }}</td>
                         <td class="text-end">
                             <a href="{{ route('admin.question-bank.edit', $question->id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil-square"></i></a>
                             <form method="POST" action="{{ route('admin.question-bank.destroy', $question->id) }}" class="d-inline" onsubmit="return confirm('Xóa câu hỏi này?')">
@@ -109,7 +130,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6" class="text-center text-muted py-4">Chưa có câu hỏi trong kho.</td></tr>
+                    <tr><td colspan="5" class="text-center text-muted py-4">Chưa có câu hỏi trong kho.</td></tr>
                 @endforelse
             </tbody>
         </table>

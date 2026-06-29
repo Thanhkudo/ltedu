@@ -19,7 +19,7 @@
                             <option value="">-- Chọn buổi học --</option>
                             @foreach($sessions as $session)
                                 <option value="{{ $session->id }}" {{ (old('session_id', request('session_id')) == $session->id) ? 'selected' : '' }}>
-                                    [{{ $session->schoolClass->name ?? '?' }}] Buổi {{ $session->session_number }} — {{ $session->title }}
+                                    [{{ $session->schoolClass->name ?? '?' }}] Buổi {{ $session->session_number }} - {{ $session->title }}
                                 </option>
                             @endforeach
                         </select>
@@ -39,23 +39,14 @@
                                     <option value="9">Lớp 9</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Loại kỹ năng</label>
-                                <select name="skill_type" class="form-select">
-                                    @foreach(['listening'=>'Nghe','speaking'=>'Nói','reading'=>'Đọc','writing'=>'Viết','grammar'=>'Ngữ pháp','vocabulary'=>'Từ vựng'] as $k => $lbl)
-                                        <option value="{{ $k }}">{{ $lbl }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
                         </div>
 
                         <table class="table table-sm" id="configTable">
                             <thead>
                             <tr>
                                 <th>Danh mục</th>
-                                <th>Dạng trả lời</th>
+                                <th>Kiểu câu hỏi</th>
                                 <th>Ngữ cảnh</th>
-                                <th>Kiểu câu</th>
                                 <th>Số câu</th>
                                 <th></th>
                             </tr>
@@ -71,10 +62,12 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <select name="question_configs[0][answer_mode]" class="form-select form-select-sm">
+                                    <select name="question_configs[0][question_type]" class="form-select form-select-sm">
                                         <option value="">Tất cả</option>
                                         <option value="select">Chọn đáp án</option>
                                         <option value="input">Nhập đáp án</option>
+                                        <option value="matching">Nối đáp án</option>
+                                        <option value="ordering">Sắp xếp đáp án</option>
                                     </select>
                                 </td>
                                 <td>
@@ -83,14 +76,6 @@
                                         <option value="normal">Thường</option>
                                         <option value="reading">Đọc hiểu</option>
                                         <option value="listening">Nghe</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <select name="question_configs[0][interaction_type]" class="form-select form-select-sm">
-                                        <option value="">Tất cả</option>
-                                        <option value="normal">Bình thường</option>
-                                        <option value="ordering">Sắp xếp</option>
-                                        <option value="matching">Nối đáp án</option>
                                     </select>
                                 </td>
                                 <td><input type="number" name="question_configs[0][quantity]" min="1" value="5" class="form-control form-control-sm"></td>
@@ -108,8 +93,8 @@
 
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Hạn nộp <span class="text-danger">*</span></label>
-                            <input type="datetime-local" name="due_date" class="form-control @error('due_date') is-invalid @enderror" value="{{ old('due_date') }}" required>
+                            <label class="form-label fw-semibold">Hạn nộp <small class="text-muted">(không bắt buộc)</small></label>
+                            <input type="datetime-local" name="due_date" class="form-control @error('due_date') is-invalid @enderror" value="{{ old('due_date') }}">
                             @error('due_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-md-6">
@@ -147,10 +132,12 @@ function addConfigRow() {
             </select>
         </td>
         <td>
-            <select name="question_configs[${configIndex}][answer_mode]" class="form-select form-select-sm">
+            <select name="question_configs[${configIndex}][question_type]" class="form-select form-select-sm">
                 <option value="">Tất cả</option>
                 <option value="select">Chọn đáp án</option>
                 <option value="input">Nhập đáp án</option>
+                <option value="matching">Nối đáp án</option>
+                <option value="ordering">Sắp xếp đáp án</option>
             </select>
         </td>
         <td>
@@ -159,14 +146,6 @@ function addConfigRow() {
                 <option value="normal">Thường</option>
                 <option value="reading">Đọc hiểu</option>
                 <option value="listening">Nghe</option>
-            </select>
-        </td>
-        <td>
-            <select name="question_configs[${configIndex}][interaction_type]" class="form-select form-select-sm">
-                <option value="">Tất cả</option>
-                <option value="normal">Bình thường</option>
-                <option value="ordering">Sắp xếp</option>
-                <option value="matching">Nối đáp án</option>
             </select>
         </td>
         <td><input type="number" name="question_configs[${configIndex}][quantity]" min="1" value="5" class="form-control form-control-sm"></td>
@@ -182,3 +161,4 @@ function removeRow(btn) {
 }
 </script>
 @endpush
+

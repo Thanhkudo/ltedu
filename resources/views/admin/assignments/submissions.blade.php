@@ -1,5 +1,5 @@
-@extends('layouts.admin')
-@section('title', 'Bài nộp — ' . $assignment->exercise->title)
+﻿@extends('layouts.admin')
+@section('title', 'Bài nộp - ' . $assignment->exercise->title)
 @section('page-title', 'Bài nộp: ' . $assignment->exercise->title)
 @section('page-actions')
     <a href="/admin/classes/{{ $assignment->session->class_id }}/show" class="btn btn-sm btn-outline-secondary">
@@ -14,8 +14,8 @@
             <div class="card-body py-2 px-3">
                 <span class="text-muted me-3">Buổi học:</span> <strong>{{ $assignment->session->title ?? 'Buổi ' . $assignment->session->session_number }}</strong>
                 <span class="text-muted ms-4 me-3">Hạn nộp:</span>
-                <strong class="{{ $assignment->isPastDue() ? 'text-danger' : 'text-success' }}">
-                    {{ $assignment->due_date ? \Carbon\Carbon::parse($assignment->due_date)->format('d/m/Y H:i') : '—' }}
+                <strong class="{{ $assignment->due_date && $assignment->isPastDue() ? 'text-danger' : 'text-success' }}">
+                    {{ $assignment->due_date ? \Carbon\Carbon::parse($assignment->due_date)->format('d/m/Y H:i') : 'Không giới hạn' }}
                 </strong>
                 <span class="text-muted ms-4 me-3">Điểm tối đa:</span> <strong>{{ $assignment->max_score }}</strong>
             </div>
@@ -38,7 +38,7 @@
                 @forelse($submissions as $sub)
                     <tr>
                         <td>
-                            <div class="fw-semibold">{{ $sub->student->full_name ?? '—' }}</div>
+                            <div class="fw-semibold">{{ $sub->student->full_name ?? '-' }}</div>
                             <small class="text-muted">{{ $sub->student->code ?? '' }}</small>
                         </td>
                         <td>
@@ -70,7 +70,7 @@
                             @endif
                         </td>
                         <td>
-                            <small>{{ $sub->submitted_at ? \Carbon\Carbon::parse($sub->submitted_at)->format('d/m/Y H:i') : '—' }}</small>
+                            <small>{{ $sub->submitted_at ? \Carbon\Carbon::parse($sub->submitted_at)->format('d/m/Y H:i') : '-' }}</small>
                         </td>
                         <td>
                             <form method="POST" action="/admin/assignments/{{ $assignment->id }}/submissions/{{ $sub->id }}/grade" class="d-flex gap-1">
@@ -96,3 +96,4 @@
     </div>
 </div>
 @endsection
+

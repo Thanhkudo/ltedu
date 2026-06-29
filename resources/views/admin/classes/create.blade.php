@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 @section('title', 'Thêm lớp học')
 @section('page-title', 'Thêm lớp học')
 
@@ -47,8 +47,8 @@
             <div class="mb-3">
                 <label class="form-label">Trạng thái</label>
                 <select name="status" class="form-select">
-                    <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                    <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                    <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Đang hoạt động</option>
+                    <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Tạm dừng</option>
                 </select>
             </div>
             <div class="mb-4">
@@ -57,10 +57,12 @@
             </div>
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary"><i class="bi bi-save me-2"></i>Lưu</button>
-                <a href="/admin/classes" class="btn btn-outline-secondary">Huỷ</a>
+                <a href="/admin/classes" class="btn btn-outline-secondary">Hủy</a>
             </div>
         </form>
     </div>
 </div>
 </div></div>
 @endsection
+
+

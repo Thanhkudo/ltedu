@@ -40,7 +40,7 @@ class SessionController extends Controller
 
         $data['class_id'] = $classId;
         $session = $this->sessionService->createSession($data);
-        return response()->json(['data' => $session, 'message' => 'Tạo buổi học thành công.'], 201);
+        return response()->json(['data' => $session, 'message' => 'Tao buoi hoc thanh cong.'], 201);
     }
 
     /**
@@ -65,7 +65,7 @@ class SessionController extends Controller
         ]);
 
         $session = $this->sessionService->updateSession($id, $data);
-        return response()->json(['data' => $session, 'message' => 'Cập nhật buổi học thành công.']);
+        return response()->json(['data' => $session, 'message' => 'Cap nhat buoi hoc thanh cong.']);
     }
 
     /**
@@ -74,16 +74,16 @@ class SessionController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $this->sessionService->deleteSession($id);
-        return response()->json(['message' => 'Xoá buổi học thành công.']);
+        return response()->json(['message' => 'Xoa buoi hoc thanh cong.']);
     }
 
     /**
      * PATCH /api/sessions/{id}/complete
-     * Đánh dấu buổi học đã hoàn thành.
+     * Danh dau buoi hoc da hoan thanh.
      */
     public function complete(int $id): JsonResponse
     {
         $session = $this->sessionService->markCompleted($id);
-        return response()->json(['data' => $session, 'message' => 'Buổi học đã hoàn thành.']);
+        return response()->json(['data' => $session, 'message' => 'Buoi hoc da hoan thanh.']);
     }
 }

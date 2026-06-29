@@ -20,12 +20,12 @@ class AssignmentController extends Controller
 
     /**
      * POST /api/assignments
-     * Giáo viên giao bài tập cho một buổi học.
+     * Giao vien giao bai tap cho mot buoi hoc.
      */
     public function store(StoreAssignmentRequest $request): JsonResponse
     {
         $assignment = $this->assignmentService->assignExercise($request->validated());
-        return response()->json(['data' => $assignment->load(['exercise', 'session']), 'message' => 'Giao bài tập thành công.'], 201);
+        return response()->json(['data' => $assignment->load(['exercise', 'session']), 'message' => 'Giao bai tap thanh cong.'], 201);
     }
 
     /**
@@ -49,7 +49,7 @@ class AssignmentController extends Controller
         ]);
 
         $assignment = $this->assignmentService->updateAssignment($id, $data);
-        return response()->json(['data' => $assignment, 'message' => 'Cập nhật bài tập thành công.']);
+        return response()->json(['data' => $assignment, 'message' => 'Cap nhat bai tap thanh cong.']);
     }
 
     /**
@@ -58,17 +58,17 @@ class AssignmentController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $this->assignmentService->deleteAssignment($id);
-        return response()->json(['message' => 'Xoá bài tập thành công.']);
+        return response()->json(['message' => 'Xoa bai tap thanh cong.']);
     }
 
     /**
      * POST /api/assignments/{id}/submit
-     * Học viên nộp bài tập.
-     * Body: { "student_id": 5, "content": "Bài làm của em...", "file_path": "optional" }
+     * Hoc vien nop bai tap.
+     * Body: { "student_id": 5, "content": "Bai lam cua em...", "file_path": "optional" }
      */
     public function submit(SubmitAssignmentRequest $request, int $id): JsonResponse
     {
-        // Trong thực tế: $studentId = Auth::user()->student->id;
+        // Trong thuc te: $studentId = Auth::user()->student->id;
         $studentId = $request->input('student_id');
 
         $submission = $this->assignmentService->submitAssignment(
@@ -77,12 +77,12 @@ class AssignmentController extends Controller
             $request->validated()
         );
 
-        return response()->json(['data' => $submission, 'message' => 'Nộp bài thành công.'], 201);
+        return response()->json(['data' => $submission, 'message' => 'Nop bai thanh cong.'], 201);
     }
 
     /**
      * PATCH /api/assignments/{id}/submissions/{submissionId}/grade
-     * Giáo viên chấm điểm bài nộp.
+     * Giao vien cham diem bai nop.
      */
     public function grade(Request $request, int $id, int $submissionId): JsonResponse
     {
@@ -97,12 +97,12 @@ class AssignmentController extends Controller
             $request->feedback
         );
 
-        return response()->json(['data' => $submission, 'message' => 'Chấm điểm thành công.']);
+        return response()->json(['data' => $submission, 'message' => 'Cham diem thanh cong.']);
     }
 
     /**
      * GET /api/assignments/{id}/submissions
-     * Xem tất cả bài nộp của một assignment.
+     * Xem tat ca bai nop cua mot assignment.
      */
     public function submissions(int $id): JsonResponse
     {

@@ -40,9 +40,9 @@ class ExerciseController extends Controller
             'difficulty'  => 'nullable|in:easy,medium,hard',
         ]);
 
-        // Tạm thời dùng user_id = 1 (thực tế lấy từ Auth::id())
+        // Tam thoi dung user_id = 1 (thuc te lay tu Auth::id())
         $exercise = $this->exerciseService->createExercise($data, optional($request->user())->id ?? 1);
-        return response()->json(['data' => $exercise, 'message' => 'Tạo bài tập thành công.'], 201);
+        return response()->json(['data' => $exercise, 'message' => 'Tao bai tap thanh cong.'], 201);
     }
 
     /**
@@ -68,7 +68,7 @@ class ExerciseController extends Controller
         ]);
 
         $exercise = $this->exerciseService->updateExercise($id, $data);
-        return response()->json(['data' => $exercise, 'message' => 'Cập nhật bài tập thành công.']);
+        return response()->json(['data' => $exercise, 'message' => 'Cap nhat bai tap thanh cong.']);
     }
 
     /**
@@ -77,6 +77,6 @@ class ExerciseController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $this->exerciseService->deleteExercise($id);
-        return response()->json(['message' => 'Xoá bài tập thành công.']);
+        return response()->json(['message' => 'Xoa bai tap thanh cong.']);
     }
 }
