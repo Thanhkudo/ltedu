@@ -161,6 +161,9 @@ return [
     'no_submission_hint' => 'Mở trang làm bài để bắt đầu bài tập này.',
     'open_practice_page' => 'Mở trang làm bài',
     'back_to_result' => 'Về trang kết quả',
+    'answer_required_feedback' => 'Bạn cần trả lời câu này trước.',
+    'answer_correct_feedback' => 'Chính xác!',
+    'answer_incorrect_feedback' => 'Chưa đúng.',
     'guide' => [
         'menu' => 'Hướng dẫn',
         'admin_menu' => 'Hướng dẫn sử dụng',

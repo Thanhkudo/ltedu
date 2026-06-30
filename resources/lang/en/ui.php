@@ -161,6 +161,9 @@ return [
     'no_submission_hint' => 'Open the practice page to start this assignment.',
     'open_practice_page' => 'Open practice page',
     'back_to_result' => 'Back to result',
+    'answer_required_feedback' => 'Please answer this question first.',
+    'answer_correct_feedback' => 'Correct!',
+    'answer_incorrect_feedback' => 'Not correct yet.',
     'guide' => [
         'menu' => 'Guide',
         'admin_menu' => 'User guide',

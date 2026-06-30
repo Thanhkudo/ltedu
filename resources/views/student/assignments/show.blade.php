@@ -1389,6 +1389,14 @@
             let currentQuestionIndex = 0;
             const questionCards = Array.from(document.querySelectorAll('.question-card'));
             const questionChecks = @json($questionChecks, JSON_UNESCAPED_UNICODE);
+            const uiText = @json([
+                'answerRequired' => __('ui.answer_required_feedback'),
+                'answerCorrect' => __('ui.answer_correct_feedback'),
+                'answerIncorrect' => __('ui.answer_incorrect_feedback'),
+                'dropAnswer' => __('ui.drop_answer'),
+                'lastQuestion' => __('ui.last_question'),
+                'next' => __('ui.next'),
+            ], JSON_UNESCAPED_UNICODE);
             const checkedState = questionCards.map(() => false);
 
             function renderQuestionNav() {
@@ -1407,11 +1415,11 @@
                     if (isLastQuestion) {
                         btnNext.disabled = true;
                         btnNext.classList.add('disabled');
-                        btnNext.innerHTML = @json(__('ui.last_question'));
+                        btnNext.innerHTML = uiText.lastQuestion;
                     } else {
                         btnNext.disabled = false;
                         btnNext.classList.remove('disabled');
-                        btnNext.innerHTML = @json(__('ui.next')) + ' <i class="bi bi-arrow-right"></i>';
+                        btnNext.innerHTML = uiText.next + ' <i class="bi bi-arrow-right"></i>';
                     }
                 }
             }
@@ -1545,7 +1553,7 @@
 
                     row?.classList.toggle('is-filled', hasValue);
                     if (label) {
-                        label.textContent = hasValue && selectedOption ? selectedOption.textContent.trim() : @json(__('ui.drop_answer'));
+                        label.textContent = hasValue && selectedOption ? selectedOption.textContent.trim() : uiText.dropAnswer;
                     }
                 });
 
@@ -1728,7 +1736,7 @@
 
                 if (!check || !hasAnswer(answer, check)) {
                     checkedState[currentQuestionIndex] = false;
-                    setQuestionFeedback(card, false, 'Ban can tra loi cau nay truoc.');
+                    setQuestionFeedback(card, false, uiText.answerRequired);
                     renderQuestionNav();
                     return {
                         hasAnswer: false,
@@ -1738,7 +1746,7 @@
 
                 const isCorrect = isCorrectAnswer(answer, check);
                 checkedState[currentQuestionIndex] = isCorrect;
-                setQuestionFeedback(card, isCorrect, isCorrect ? 'Chinh xac!' : 'Chua dung.');
+                setQuestionFeedback(card, isCorrect, isCorrect ? uiText.answerCorrect : uiText.answerIncorrect);
 
                 renderQuestionNav();
                 return {
