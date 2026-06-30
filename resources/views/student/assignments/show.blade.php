@@ -1385,18 +1385,21 @@
 
 @push('scripts')
     @if ($practiceMode && $isQuestionFlow)
-        <script>
-            let currentQuestionIndex = 0;
-            const questionCards = Array.from(document.querySelectorAll('.question-card'));
-            const questionChecks = @json($questionChecks, JSON_UNESCAPED_UNICODE);
-            const uiText = @json([
+        @php
+            $uiText = [
                 'answerRequired' => __('ui.answer_required_feedback'),
                 'answerCorrect' => __('ui.answer_correct_feedback'),
                 'answerIncorrect' => __('ui.answer_incorrect_feedback'),
                 'dropAnswer' => __('ui.drop_answer'),
                 'lastQuestion' => __('ui.last_question'),
                 'next' => __('ui.next'),
-            ], JSON_UNESCAPED_UNICODE);
+            ];
+        @endphp
+        <script>
+            let currentQuestionIndex = 0;
+            const questionCards = Array.from(document.querySelectorAll('.question-card'));
+            const questionChecks = @json($questionChecks, JSON_UNESCAPED_UNICODE);
+            const uiText = {!! json_encode($uiText, JSON_UNESCAPED_UNICODE) !!};
             const checkedState = questionCards.map(() => false);
 
             function renderQuestionNav() {
