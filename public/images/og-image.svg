@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1040" cy="80" r="180" fill="#fff" opacity=".12"/>
+  <circle cx="80" cy="560" r="220" fill="#fff" opacity=".10"/>
+  <rect x="80" y="100" width="1040" height="430" rx="36" fill="#fff" opacity=".14"/>
+  <text x="120" y="265" fill="#fff" font-family="Montserrat, Arial, sans-serif" font-size="92" font-weight="800">LTEdu</text>
+  <text x="124" y="345" fill="#e0f2fe" font-family="Montserrat, Arial, sans-serif" font-size="36" font-weight="700">Learning management and practice platform</text>
+  <text x="124" y="410" fill="#fff" font-family="Montserrat, Arial, sans-serif" font-size="30" font-weight="600">Classes • Assignments • Question bank • Results</text>
+</svg>

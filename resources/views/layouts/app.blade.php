@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', __('ui.student_portal')) - LTEdu</title>
+    @include('layouts.partials.meta')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&subset=vietnamese&display=swap" rel="stylesheet">
@@ -68,42 +69,7 @@
 </head>
 <body>
 
-<div class="s-topbar">
-    <a href="/" class="brand"><span class="logo-pill">&#x1F4DA;</span>LTEdu</a>
-    @if(session('student_id'))
-        @php $__topStudent = \App\Models\Student::find(session('student_id')); @endphp
-        <div class="d-flex align-items-center gap-2">
-            <div class="language-switcher" aria-label="{{ __('ui.language') }}">
-                <a href="{{ route('language.switch', 'en') }}" class="{{ app()->getLocale() === 'en' ? 'active' : '' }}">EN</a>
-                <a href="{{ route('language.switch', 'vi') }}" class="{{ app()->getLocale() === 'vi' ? 'active' : '' }}">VI</a>
-            </div>
-            <div class="s-avatar">{{ mb_substr($__topStudent->full_name ?? 'U', 0, 1) }}</div>
-            <div style="color:#fff;line-height:1.2">
-                <div style="font-size:.7rem;opacity:.8">{{ __('ui.hello') }} &#x1F44B;</div>
-                <div style="font-size:.82rem;font-weight:800">{{ $__topStudent->full_name ?? '' }}</div>
-            </div>
-            <form method="POST" action="/logout-student" class="m-0 ms-1">
-                @csrf
-                <button style="background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:10px;font-size:.72rem;font-weight:800;padding:5px 10px;cursor:pointer;">
-                    &#x21A9; {{ __('ui.switch_student') }}
-                </button>
-            </form>
-        </div>
-    @else
-        <div class="d-flex align-items-center gap-2">
-            <div class="language-switcher" aria-label="{{ __('ui.language') }}">
-                <a href="{{ route('language.switch', 'en') }}" class="{{ app()->getLocale() === 'en' ? 'active' : '' }}">EN</a>
-                <a href="{{ route('language.switch', 'vi') }}" class="{{ app()->getLocale() === 'vi' ? 'active' : '' }}">VI</a>
-            </div>
-            <a href="{{ route('guide') }}" style="color:#fff;font-size:.78rem;font-weight:800;text-decoration:none;background:rgba(255,255,255,.2);padding:6px 10px;border-radius:10px;">
-                <i class="bi bi-question-circle"></i> {{ __('ui.guide.menu') }}
-            </a>
-            <a href="/admin" style="color:#fff;font-size:.78rem;font-weight:800;text-decoration:none;background:rgba(255,255,255,.2);padding:6px 12px;border-radius:10px;">
-                &#x1F6E1;&#xFE0F; {{ __('ui.admin') }}
-            </a>
-        </div>
-    @endif
-</div>
+@include('layouts.partials.app-header')
 
 <div class="px-3 py-3 mx-auto" style="max-width:1200px">
     @if(session('success'))
@@ -121,32 +87,10 @@
     @yield('content')
 </div>
 
-@if(session('student_id'))
-@php $__navStudent = \App\Models\Student::with('classes')->find(session('student_id')); @endphp
-<nav class="s-bottom-nav">
-    <a href="/" class="{{ request()->is('/') ? 'active' : '' }}">
-        <i class="bi bi-house-heart-fill"></i>
-        {{ __('ui.home') }}
-        @if(request()->is('/')) <span class="s-nav-pip"></span> @endif
-    </a>
-    <a href="{{ route('guide') }}" class="{{ request()->is('huong-dan') ? 'active' : '' }}">
-        <i class="bi bi-question-circle-fill"></i>
-        {{ __('ui.guide.menu') }}
-        @if(request()->is('huong-dan')) <span class="s-nav-pip"></span> @endif
-    </a>
-    @if($__navStudent)
-        @foreach($__navStudent->classes->take(3) as $__navClass)
-        <a href="/classes/{{ $__navClass->id }}" class="{{ request()->is('classes/'.$__navClass->id) ? 'active' : '' }}">
-            <i class="bi bi-journal-bookmark-fill"></i>
-            {{ \Illuminate\Support\Str::limit($__navClass->name, 6, '...') }}
-            @if(request()->is('classes/'.$__navClass->id)) <span class="s-nav-pip"></span> @endif
-        </a>
-        @endforeach
-    @endif
-</nav>
-@endif
+@include('layouts.partials.student-bottom-nav')
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @stack('scripts')
 </body>
 </html>
+

@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', __('ui.admin')) - LTEdu Admin</title>
+    @include('layouts.partials.meta')
         <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&subset=vietnamese&display=swap" rel="stylesheet">
@@ -163,77 +164,11 @@
         ];
         $allowed = $roleModules[$adminUser->role ?? ''] ?? [];
     @endphp
-    {{-- Sidebar --}}
-    <div class="admin-sidebar">
-        <div class="brand"><i class="bi bi-shield-check me-2"></i>LTEdu Admin</div>
-        <nav class="nav flex-column mt-2">
-            <span class="nav-section">{{ __('ui.overview') }}</span>
-            @if (in_array('dashboard', $allowed))
-                <a class="nav-link {{ request()->is('admin') ? 'active' : '' }}" href="/admin">
-                    <i class="bi bi-grid-1x2-fill"></i> {{ __('ui.overview') }}
-                </a>
-            @endif
-
-            <span class="nav-section">{{ __('ui.management') }}</span>
-            @if (in_array('students', $allowed))
-                <a class="nav-link {{ request()->is('admin/students*') ? 'active' : '' }}" href="/admin/students">
-                    <i class="bi bi-people-fill"></i> {{ __('ui.students') }}
-                </a>
-            @endif
-            @if (in_array('classes', $allowed))
-                <a class="nav-link {{ request()->is('admin/classes*') ? 'active' : '' }}" href="/admin/classes">
-                    <i class="bi bi-journal-bookmark-fill"></i> {{ __('ui.classes') }}
-                </a>
-            @endif
-            @if ($adminUser->role === 'admin')
-                <a class="nav-link {{ request()->is('admin/users*') ? 'active' : '' }}" href="/admin/users">
-                    <i class="bi bi-people-fill"></i> {{ __('ui.users') }}
-                </a>
-            @endif
-            @if (in_array('assignments', $allowed))
-                <a class="nav-link {{ request()->is('admin/assignments*') ? 'active' : '' }}"
-                    href="/admin/assignments/create">
-                    <i class="bi bi-clipboard2-check-fill"></i> {{ __('ui.assignments') }}
-                </a>
-            @endif
-            @if (in_array('question-bank', $allowed))
-                <a class="nav-link {{ request()->is('admin/question-bank*') ? 'active' : '' }}"
-                    href="{{ route('admin.question-bank.index') }}">
-                    <i class="bi bi-collection-fill"></i> {{ __('ui.question_bank') }}
-                </a>
-            @endif
-            @if (in_array('question-categories', $allowed))
-                <a class="nav-link {{ request()->is('admin/question-categories*') ? 'active' : '' }}"
-                    href="{{ route('admin.question-categories.index') }}">
-                    <i class="bi bi-tags-fill"></i> {{ __('ui.question_categories') }}
-                </a>
-            @endif
-
-            <span class="nav-section">{{ __('ui.system') }}</span>
-            <a class="nav-link {{ request()->is('admin/huong-dan') ? 'active' : '' }}" href="{{ route('admin.guide') }}">
-                <i class="bi bi-question-circle-fill"></i> {{ __('ui.guide.admin_menu') }}
-            </a>
-            <a class="nav-link" href="/"><i class="bi bi-box-arrow-left"></i> {{ __('ui.student_site') }}</a>
-        </nav>
-    </div>
+    @include('layouts.partials.admin-sidebar')
 
     {{-- Main content --}}
     <div class="admin-content">
-        <div class="admin-topbar">
-            <h5>@yield('page-title', 'Dashboard')</h5>
-            <div class="d-flex gap-2 align-items-center">
-                <span class="badge bg-light text-dark border">
-                    {{ $adminUser->name ?? 'User' }} ({{ strtoupper($adminUser->role ?? 'n/a') }})
-                </span>
-                <form method="POST" action="{{ route('admin.logout') }}" class="m-0">
-                    @csrf
-                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                        <i class="bi bi-box-arrow-right me-1"></i>{{ __('ui.logout') }}
-                    </button>
-                </form>
-                @yield('page-actions')
-            </div>
-        </div>
+        @include('layouts.partials.admin-topbar')
 
         <div class="p-4">
             {{-- Flash messages --}}
@@ -251,7 +186,7 @@
             @endif
             @if ($errors->any())
                 <div class="alert alert-danger">
-                    <i class="bi bi-exclamation-triangle me-2"></i>Vui lòng kiểm tra các trường được đánh dấu bên dưới.
+                    <i class="bi bi-exclamation-triangle me-2"></i>Vui lÃ²ng kiá»ƒm tra cÃ¡c trÆ°á»ng Ä‘Æ°á»£c Ä‘Ã¡nh dáº¥u bÃªn dÆ°á»›i.
                 </div>
             @endif
 
@@ -329,3 +264,4 @@
 </body>
 
 </html>
+
