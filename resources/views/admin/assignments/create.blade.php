@@ -6,10 +6,10 @@
 @endsection
 
 @section('content')
-<div class="row justify-content-center">
-    <div class="col-lg-8">
+<div class="row justify-content-center assignment-create-page">
+    <div class="col-xl-9 col-lg-10">
         <div class="card">
-            <div class="card-body p-4">
+            <div class="card-body p-4 assignment-create-body">
                 <form method="POST" action="/admin/assignments" id="assignmentForm">
                     @csrf
 
@@ -26,7 +26,7 @@
                         @error('session_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
 
-                    <div class="border rounded p-3 mb-3 bg-light-subtle">
+                    <div class="assignment-config-panel border rounded p-3 mb-3 bg-light-subtle">
                         <h6 class="fw-semibold mb-2">Cấu hình bài tập từ kho câu hỏi</h6>
                         <p class="text-muted small mb-3">Bài tập của buổi học này sẽ được hệ thống sinh tự động từ kho câu hỏi theo cấu hình bên dưới.</p>
                         <div class="row g-3 mb-3">
@@ -41,27 +41,19 @@
                             </div>
                         </div>
 
-                        <table class="table table-sm" id="configTable">
-                            <thead>
-                            <tr>
-                                <th>Danh mục</th>
-                                <th>Kiểu câu hỏi</th>
-                                <th>Ngữ cảnh</th>
-                                <th>Số câu</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>
+                        <div class="config-list" id="configList">
+                            <div class="config-row">
+                                <div class="config-field config-field-category">
+                                    <label class="config-label">Danh mục</label>
                                     <select name="question_configs[0][category_id]" class="form-select form-select-sm">
                                         <option value="">-- Tất cả --</option>
                                         @foreach($categories as $cat)
                                             <option value="{{ $cat->id }}">L{{ $cat->grade_level }} - {{ ucfirst($cat->skill_type) }} - {{ $cat->name }}</option>
                                         @endforeach
                                     </select>
-                                </td>
-                                <td>
+                                </div>
+                                <div class="config-field">
+                                    <label class="config-label">Kiểu câu hỏi</label>
                                     <select name="question_configs[0][question_type]" class="form-select form-select-sm">
                                         <option value="">Tất cả</option>
                                         <option value="select">Chọn đáp án</option>
@@ -69,21 +61,30 @@
                                         <option value="matching">Nối đáp án</option>
                                         <option value="ordering">Sắp xếp đáp án</option>
                                     </select>
-                                </td>
-                                <td>
+                                </div>
+                                <div class="config-field">
+                                    <label class="config-label">Ngữ cảnh</label>
                                     <select name="question_configs[0][context_type]" class="form-select form-select-sm">
                                         <option value="">Tất cả</option>
                                         <option value="normal">Thường</option>
                                         <option value="reading">Đọc hiểu</option>
                                         <option value="listening">Nghe</option>
                                     </select>
-                                </td>
-                                <td><input type="number" name="question_configs[0][quantity]" min="1" value="5" class="form-control form-control-sm"></td>
-                                <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">X</button></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="addConfigRow()">+ Thêm cấu hình dòng</button>
+                                </div>
+                                <div class="config-field config-field-quantity">
+                                    <label class="config-label">Số câu</label>
+                                    <input type="number" name="question_configs[0][quantity]" min="1" value="5" class="form-control form-control-sm">
+                                </div>
+                                <div class="config-actions">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-3" onclick="addConfigRow()">
+                            <i class="bi bi-plus-lg me-1"></i>Thêm cấu hình
+                        </button>
                     </div>
 
                     <div class="mb-3">
@@ -104,7 +105,7 @@
                         </div>
                     </div>
 
-                    <div class="d-flex gap-2">
+                    <div class="assignment-submit-actions d-flex gap-2">
                         <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Giao bài</button>
                         <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">Hủy</a>
                     </div>
@@ -115,23 +116,105 @@
 </div>
 @endsection
 
+@push('styles')
+<style>
+    .assignment-config-panel {
+        border-color: #dbe4f0 !important;
+    }
+
+    .config-list {
+        display: grid;
+        gap: 10px;
+    }
+
+    .config-row {
+        display: grid;
+        grid-template-columns: minmax(220px, 1.45fr) minmax(150px, 1fr) minmax(130px, .9fr) 90px 42px;
+        gap: 10px;
+        align-items: end;
+        padding: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background: #fff;
+    }
+
+    .config-field {
+        min-width: 0;
+    }
+
+    .config-label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: .76rem;
+        font-weight: 800;
+        color: #64748b;
+    }
+
+    .config-actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .config-actions .btn {
+        width: 38px;
+        min-height: 32px;
+    }
+
+    @media (max-width: 767.98px) {
+        .assignment-create-body {
+            padding: 14px !important;
+        }
+
+        .assignment-config-panel {
+            padding: 12px !important;
+        }
+
+        .config-row {
+            grid-template-columns: 1fr;
+            gap: 9px;
+            padding: 12px;
+        }
+
+        .config-actions {
+            justify-content: stretch;
+        }
+
+        .config-actions .btn {
+            width: 100%;
+        }
+
+        .assignment-submit-actions {
+            display: grid !important;
+            grid-template-columns: 1fr;
+        }
+
+        .assignment-submit-actions .btn {
+            width: 100%;
+        }
+    }
+</style>
+@endpush
+
 @push('scripts')
 <script>
 let configIndex = 1;
 
 function addConfigRow() {
-    const tbody = document.querySelector('#configTable tbody');
-    const row = document.createElement('tr');
+    const list = document.querySelector('#configList');
+    const row = document.createElement('div');
+    row.className = 'config-row';
     row.innerHTML = `
-        <td>
+        <div class="config-field config-field-category">
+            <label class="config-label">Danh mục</label>
             <select name="question_configs[${configIndex}][category_id]" class="form-select form-select-sm">
                 <option value="">-- Tất cả --</option>
                 @foreach($categories as $cat)
                     <option value="{{ $cat->id }}">L{{ $cat->grade_level }} - {{ ucfirst($cat->skill_type) }} - {{ $cat->name }}</option>
                 @endforeach
             </select>
-        </td>
-        <td>
+        </div>
+        <div class="config-field">
+            <label class="config-label">Kiểu câu hỏi</label>
             <select name="question_configs[${configIndex}][question_type]" class="form-select form-select-sm">
                 <option value="">Tất cả</option>
                 <option value="select">Chọn đáp án</option>
@@ -139,26 +222,33 @@ function addConfigRow() {
                 <option value="matching">Nối đáp án</option>
                 <option value="ordering">Sắp xếp đáp án</option>
             </select>
-        </td>
-        <td>
+        </div>
+        <div class="config-field">
+            <label class="config-label">Ngữ cảnh</label>
             <select name="question_configs[${configIndex}][context_type]" class="form-select form-select-sm">
                 <option value="">Tất cả</option>
                 <option value="normal">Thường</option>
                 <option value="reading">Đọc hiểu</option>
                 <option value="listening">Nghe</option>
             </select>
-        </td>
-        <td><input type="number" name="question_configs[${configIndex}][quantity]" min="1" value="5" class="form-control form-control-sm"></td>
-        <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">X</button></td>`;
-    tbody.appendChild(row);
+        </div>
+        <div class="config-field config-field-quantity">
+            <label class="config-label">Số câu</label>
+            <input type="number" name="question_configs[${configIndex}][quantity]" min="1" value="5" class="form-control form-control-sm">
+        </div>
+        <div class="config-actions">
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>`;
+    list.appendChild(row);
     configIndex++;
 }
 
 function removeRow(btn) {
-    const rows = document.querySelectorAll('#configTable tbody tr');
+    const rows = document.querySelectorAll('#configList .config-row');
     if (rows.length === 1) return;
-    btn.closest('tr').remove();
+    btn.closest('.config-row').remove();
 }
 </script>
 @endpush
-

@@ -30,10 +30,27 @@
             min-height: 100vh;
             background: #1e2a3b;
             color: #cdd4de;
+            overflow-y: auto;
+        }
+
+        .admin-sidebar-desktop {
             position: fixed;
             top: 0;
             left: 0;
             z-index: 100;
+        }
+
+        .admin-mobile-menu {
+            width: 290px;
+            max-width: 88vw;
+            border: 0;
+            background: #1e2a3b;
+        }
+
+        .admin-sidebar-mobile {
+            width: 100%;
+            min-height: 100%;
+            position: static;
         }
 
         .admin-sidebar .brand {
@@ -80,12 +97,46 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 90;
         }
 
         .admin-topbar h5 {
             margin: 0;
             font-weight: 600;
             font-size: 1rem;
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .admin-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .admin-menu-toggle {
+            display: none;
+            width: 36px;
+            height: 36px;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+        }
+
+        .admin-topbar-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .admin-page-body {
+            padding: 24px;
         }
 
         .card {
@@ -136,6 +187,140 @@
             font-weight: 600;
             color: #dc3545;
         }
+
+        .form-control,
+        .form-select,
+        .btn {
+            min-height: 38px;
+        }
+
+        .btn-sm {
+            min-height: 32px;
+        }
+
+        .table-responsive {
+            border-radius: 10px;
+        }
+
+        .card-header form.d-flex,
+        .admin-filter-actions {
+            flex-wrap: wrap;
+        }
+
+        .card-header form.d-flex .form-control,
+        .card-header form.d-flex .form-select {
+            flex: 1 1 220px;
+            max-width: 100% !important;
+        }
+
+        .table td,
+        .table th {
+            vertical-align: middle;
+        }
+
+        @media (max-width: 991.98px) {
+            .admin-sidebar-desktop {
+                display: none;
+            }
+
+            .admin-content {
+                margin-left: 0;
+            }
+
+            .admin-menu-toggle {
+                display: inline-flex;
+            }
+
+            .admin-topbar {
+                padding: 10px 14px;
+            }
+
+            .admin-page-body {
+                padding: 14px;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            body {
+                background: #f6f8fb;
+            }
+
+            .admin-topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .admin-title-wrap,
+            .admin-topbar-actions {
+                width: 100%;
+            }
+
+            .admin-topbar-actions {
+                justify-content: flex-start;
+            }
+
+            .admin-user-badge {
+                max-width: 100%;
+                white-space: normal;
+                text-align: left;
+            }
+
+            .card {
+                border-radius: 12px;
+            }
+
+            .card-body {
+                padding: 14px;
+            }
+
+            .row {
+                --bs-gutter-x: .75rem;
+                --bs-gutter-y: .75rem;
+            }
+
+            .table {
+                min-width: 680px;
+            }
+
+            .table:not(.table-sm) td,
+            .table:not(.table-sm) th {
+                padding: .65rem .75rem;
+            }
+
+            .btn,
+            .form-control,
+            .form-select {
+                font-size: .92rem;
+            }
+
+            .admin-topbar-actions .btn {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .card-header form.d-flex {
+                gap: 8px !important;
+            }
+
+            .card-header form.d-flex .btn {
+                flex: 0 0 auto;
+            }
+
+            .pagination {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .admin-page-body {
+                padding: 10px;
+            }
+
+            .admin-topbar h5 {
+                font-size: .95rem;
+            }
+        }
     </style>
     @stack('styles')
 </head>
@@ -170,7 +355,7 @@
     <div class="admin-content">
         @include('layouts.partials.admin-topbar')
 
-        <div class="p-4">
+        <div class="admin-page-body">
             {{-- Flash messages --}}
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show">
@@ -186,7 +371,7 @@
             @endif
             @if ($errors->any())
                 <div class="alert alert-danger">
-                    <i class="bi bi-exclamation-triangle me-2"></i>Vui lÃ²ng kiá»ƒm tra cÃ¡c trÆ°á»ng Ä‘Æ°á»£c Ä‘Ã¡nh dáº¥u bÃªn dÆ°á»›i.
+                    <i class="bi bi-exclamation-triangle me-2"></i>Vui lòng kiểm tra các trường được đánh dấu bên dưới.
                 </div>
             @endif
 

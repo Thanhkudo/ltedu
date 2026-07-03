@@ -1,0 +1,10 @@
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+ios/Pods/
+ios/.symlinks/
+android/.gradle/
+android/local.properties
+pubspec.lock

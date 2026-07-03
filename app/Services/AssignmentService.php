@@ -95,4 +95,17 @@ class AssignmentService
             ->latest('submitted_at')
             ->get();
     }
+
+    public function getRecentSubmissionGroupsForAssignment(int $assignmentId, int $limit = 3)
+    {
+        return AssignmentSubmission::where('assignment_id', $assignmentId)
+            ->with(['student'])
+            ->orderBy('student_id')
+            ->orderByDesc('submitted_at')
+            ->orderByDesc('id')
+            ->get()
+            ->groupBy('student_id')
+            ->map(fn ($items) => $items->take($limit)->values())
+            ->sortBy(fn ($items) => optional($items->first()->student)->full_name ?? '');
+    }
 }

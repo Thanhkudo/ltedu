@@ -66,6 +66,8 @@ Route::prefix('admin')->name('admin.')->middleware('admin.locale')->group(functi
     Route::post('classes/{classId}/sessions', [Admin\SessionController::class, 'store'])->name('sessions.store')->middleware('admin.module:sessions');
     Route::delete('sessions/{id}', [Admin\SessionController::class, 'destroy'])->name('sessions.destroy')->middleware('admin.module:sessions');
     Route::post('sessions/{id}/complete', [Admin\SessionController::class, 'complete'])->name('sessions.complete')->middleware('admin.module:sessions');
+    Route::post('sessions/{id}/reopen', [Admin\SessionController::class, 'reopen'])->name('sessions.reopen')->middleware('admin.module:sessions');
+    Route::post('sessions/{id}/cancel', [Admin\SessionController::class, 'cancel'])->name('sessions.cancel')->middleware('admin.module:sessions');
 
     // Assignments
     Route::get('assignments/create', [Admin\AssignmentController::class, 'create'])->name('assignments.create')->middleware('admin.module:assignments');

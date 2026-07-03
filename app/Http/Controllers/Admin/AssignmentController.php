@@ -80,9 +80,10 @@ class AssignmentController extends Controller
      */
     public function submissions(int $id)
     {
-        $assignment  = $this->assignmentService->getAssignment($id);
-        $submissions = $this->assignmentService->getSubmissionsForAssignment($id);
-        return view('admin.assignments.submissions', compact('assignment', 'submissions'));
+        $assignment       = $this->assignmentService->getAssignment($id);
+        $submissionGroups = $this->assignmentService->getRecentSubmissionGroupsForAssignment($id);
+
+        return view('admin.assignments.submissions', compact('assignment', 'submissionGroups'));
     }
 
     /**

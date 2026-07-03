@@ -12,7 +12,7 @@
     <div class="card-header bg-white">
         <form method="GET" class="d-flex gap-2">
             <input type="text" name="search" class="form-control form-control-sm" style="max-width:280px"
-                   placeholder="Tim kiem ten, email, ma HV..." value="{{ request('search') }}">
+                   placeholder="Tìm kiếm tên, email, mã HV..." value="{{ request('search') }}">
             <button type="submit" class="btn btn-sm btn-outline-secondary">
                 <i class="bi bi-search"></i>
             </button>
@@ -27,7 +27,7 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
                 <tr>
-                    <th>Ma HV</th><th>Ho ten</th><th>Email</th><th>So dien thoai</th><th>Lop</th><th></th>
+                    <th>Mã HV</th><th>Họ tên</th><th>Email</th><th>Số điện thoại</th><th>Lớp</th><th></th>
                 </tr>
             </thead>
             <tbody>

@@ -239,6 +239,8 @@ class QuestionBankController extends Controller
             ],
         ];
 
+        $rows = $this->importTemplateRows();
+
         $export = new class($headers, $keys, $rows) implements FromArray, WithHeadings {
             private array $headers;
             private array $keys;
@@ -292,16 +294,31 @@ class QuestionBankController extends Controller
                     $cacheKey = $itemData['category_id'] . '|' . $itemData['context_type'] . '|' . $itemData['group_key'];
 
                     if (!isset($groupCache[$cacheKey])) {
-                        $groupCache[$cacheKey] = QuestionGroup::create([
-                            'category_id' => $itemData['category_id'],
-                            'type' => $itemData['context_type'],
-                            'title' => $itemData['group_title'] ?: ($itemData['title'] ?: $itemData['group_key']),
-                            'passage' => $itemData['context_type'] === 'reading' ? ($itemData['passage'] ?: null) : null,
-                            'audio_url' => $itemData['context_type'] === 'listening' ? ($itemData['audio_url'] ?: null) : null,
-                            'difficulty' => $itemData['difficulty'],
-                            'is_active' => true,
-                            'created_by' => auth()->id(),
-                        ])->id;
+                        $groupTitle = $itemData['group_title'] ?: $itemData['group_key'];
+                        $group = QuestionGroup::firstOrCreate(
+                            [
+                                'category_id' => $itemData['category_id'],
+                                'type' => $itemData['context_type'],
+                                'title' => $groupTitle,
+                            ],
+                            [
+                                'passage' => $itemData['context_type'] === 'reading' ? ($itemData['passage'] ?: null) : null,
+                                'audio_url' => $itemData['context_type'] === 'listening' ? ($itemData['audio_url'] ?: null) : null,
+                                'difficulty' => 'medium',
+                                'is_active' => true,
+                                'created_by' => auth()->id(),
+                            ]
+                        );
+
+                        if ($itemData['context_type'] === 'reading' && !$group->passage && $itemData['passage'] !== '') {
+                            $group->update(['passage' => $itemData['passage']]);
+                        }
+
+                        if ($itemData['context_type'] === 'listening' && !$group->audio_url && $itemData['audio_url'] !== '') {
+                            $group->update(['audio_url' => $itemData['audio_url']]);
+                        }
+
+                        $groupCache[$cacheKey] = $group->id;
                     }
 
                     $groupId = $groupCache[$cacheKey];
@@ -323,7 +340,7 @@ class QuestionBankController extends Controller
                     'interaction_type' => $itemData['interaction_type'],
                     'interaction_data' => $itemData['interaction_data'],
                     'context_type' => $itemData['context_type'],
-                    'difficulty' => $itemData['difficulty'],
+                    'difficulty' => 'medium',
                     'correct_answer' => $itemData['correct_answer'] ?: null,
                     'explanation' => $itemData['explanation'] ?: null,
                     'is_active' => true,
@@ -645,8 +662,151 @@ class QuestionBankController extends Controller
         ];
     }
 
+    private function importTemplateRows(): array
+    {
+        return [
+            [
+                'group_key' => '',
+                'group_title' => '',
+                'category_id' => '1',
+                'title' => 'Câu chọn đáp án mẫu',
+                'question_text' => 'Choose the correct answer: I ___ a student.',
+                'question_type' => 'select',
+                'context_type' => 'normal',
+                'correct_answer' => '',
+                'options' => 'am|is|are|be',
+                'correct_option' => '0',
+                'ordering_items' => '',
+                'matching_pairs' => '',
+                'passage' => '',
+                'audio_url' => '',
+                'explanation' => 'Sau I dùng am.',
+            ],
+            [
+                'group_key' => '',
+                'group_title' => '',
+                'category_id' => '1',
+                'title' => 'Câu nhập đáp án mẫu',
+                'question_text' => 'Fill in the blank: She ___ to school every day.',
+                'question_type' => 'input',
+                'context_type' => 'normal',
+                'correct_answer' => 'goes',
+                'options' => '',
+                'correct_option' => '',
+                'ordering_items' => '',
+                'matching_pairs' => '',
+                'passage' => '',
+                'audio_url' => '',
+                'explanation' => '',
+            ],
+            [
+                'group_key' => '',
+                'group_title' => '',
+                'category_id' => '1',
+                'title' => 'Câu sắp xếp mẫu',
+                'question_text' => 'Sắp xếp các từ thành câu đúng.',
+                'question_type' => 'ordering',
+                'context_type' => 'normal',
+                'correct_answer' => '',
+                'options' => '',
+                'correct_option' => '',
+                'ordering_items' => 'I|am|a student',
+                'matching_pairs' => '',
+                'passage' => '',
+                'audio_url' => '',
+                'explanation' => '',
+            ],
+            [
+                'group_key' => '',
+                'group_title' => '',
+                'category_id' => '1',
+                'title' => 'Câu nối đáp án mẫu',
+                'question_text' => 'Nối từ với nghĩa phù hợp.',
+                'question_type' => 'matching',
+                'context_type' => 'normal',
+                'correct_answer' => '',
+                'options' => '',
+                'correct_option' => '',
+                'ordering_items' => '',
+                'matching_pairs' => 'Cat=>Con mèo|Dog=>Con chó',
+                'passage' => '',
+                'audio_url' => '',
+                'explanation' => '',
+            ],
+            [
+                'group_key' => 'READING_UNIT_1',
+                'group_title' => 'Bài đọc Unit 1 - My new school',
+                'category_id' => '1',
+                'title' => 'Câu 1 bài đọc Unit 1',
+                'question_text' => 'What is the passage mainly about?',
+                'question_type' => 'select',
+                'context_type' => 'reading',
+                'correct_answer' => '',
+                'options' => 'A new school|A family trip|A birthday party|A football match',
+                'correct_option' => '0',
+                'ordering_items' => '',
+                'matching_pairs' => '',
+                'passage' => 'This is my new school. It is big and beautiful. I have many new friends here.',
+                'audio_url' => '',
+                'explanation' => 'Dòng đầu của nhóm đọc cần nhập đoạn văn.',
+            ],
+            [
+                'group_key' => 'READING_UNIT_1',
+                'group_title' => 'Bài đọc Unit 1 - My new school',
+                'category_id' => '1',
+                'title' => 'Câu 2 bài đọc Unit 1',
+                'question_text' => 'The school is big and beautiful.',
+                'question_type' => 'input',
+                'context_type' => 'reading',
+                'correct_answer' => 'true',
+                'options' => '',
+                'correct_option' => '',
+                'ordering_items' => '',
+                'matching_pairs' => '',
+                'passage' => '',
+                'audio_url' => '',
+                'explanation' => 'Cùng Mã nhóm nên không cần nhập lại đoạn văn.',
+            ],
+            [
+                'group_key' => 'LISTENING_UNIT_1',
+                'group_title' => 'Bài nghe Unit 1',
+                'category_id' => '1',
+                'title' => 'Câu 1 bài nghe Unit 1',
+                'question_text' => 'Listen and choose the word you hear.',
+                'question_type' => 'select',
+                'context_type' => 'listening',
+                'correct_answer' => '',
+                'options' => 'school|book|pen|bag',
+                'correct_option' => '0',
+                'ordering_items' => '',
+                'matching_pairs' => '',
+                'passage' => '',
+                'audio_url' => '/data/audios/unit-1-listening.mp3',
+                'explanation' => 'Upload audio lên CKFinder trước, sau đó điền đường dẫn ở dòng đầu của nhóm.',
+            ],
+        ];
+    }
+
     private function importHeaderLabels(): array
     {
+        return [
+            'group_key' => 'Mã nhóm',
+            'group_title' => 'Tiêu đề nhóm',
+            'category_id' => 'ID danh mục',
+            'title' => 'Tiêu đề',
+            'question_text' => 'Nội dung câu hỏi',
+            'question_type' => 'Kiểu câu hỏi',
+            'context_type' => 'Ngữ cảnh',
+            'correct_answer' => 'Đáp án đúng',
+            'options' => 'Danh sách đáp án',
+            'correct_option' => 'Vị trí đáp án đúng',
+            'ordering_items' => 'Thứ tự đáp án',
+            'matching_pairs' => 'Cặp nối đáp án',
+            'passage' => 'Đoạn văn',
+            'audio_url' => 'File audio',
+            'explanation' => 'Giải thích',
+        ];
+
         return [
             'group_key' => 'Mã nhóm',
             'group_title' => 'Tiêu đề nhóm',
@@ -782,7 +942,6 @@ class QuestionBankController extends Controller
 
         $normalized['question_type'] = strtolower($normalized['question_type'] ?: 'select');
         $normalized['context_type'] = strtolower($normalized['context_type'] ?: 'normal');
-        $normalized['difficulty'] = strtolower($normalized['difficulty'] ?? 'medium');
 
         return $normalized;
     }
@@ -796,6 +955,10 @@ class QuestionBankController extends Controller
         $correctOption = null;
         $interactionData = null;
         $correctAnswer = null;
+
+        if (in_array($row['context_type'], ['reading', 'listening'], true) && $row['group_key'] === '') {
+            throw new \InvalidArgumentException('Dòng ' . $lineNumber . ': câu đọc hiểu/nghe cần nhập Mã nhóm để gom các câu cùng bài.');
+        }
 
         if ($questionType === 'select') {
             $options = $this->splitImportList($row['options']);
@@ -840,7 +1003,6 @@ class QuestionBankController extends Controller
             'interaction_type' => $interactionType,
             'interaction_data' => $interactionData,
             'context_type' => $row['context_type'],
-            'difficulty' => $row['difficulty'],
             'correct_answer' => $correctAnswer,
             'explanation' => $row['explanation'],
             'options' => $options,

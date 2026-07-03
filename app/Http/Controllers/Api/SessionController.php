@@ -86,4 +86,16 @@ class SessionController extends Controller
         $session = $this->sessionService->markCompleted($id);
         return response()->json(['data' => $session, 'message' => 'Buoi hoc da hoan thanh.']);
     }
+
+    public function reopen(int $id): JsonResponse
+    {
+        $session = $this->sessionService->reopenSession($id);
+        return response()->json(['data' => $session, 'message' => 'Buoi hoc da duoc mo lai.']);
+    }
+
+    public function cancel(int $id): JsonResponse
+    {
+        $session = $this->sessionService->cancelSession($id);
+        return response()->json(['data' => $session, 'message' => 'Buoi hoc da huy.']);
+    }
 }

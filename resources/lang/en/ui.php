@@ -85,6 +85,7 @@ return [
     'scheduled' => 'Scheduled',
     'completed' => 'Completed',
     'cancelled' => 'Cancelled',
+    'cancelled_session_note' => 'This lesson was cancelled, so you do not need to do homework for it.',
     'not_submitted' => 'Not submitted',
     'overdue' => 'Overdue',
     'graded' => 'Graded: :score/:max',

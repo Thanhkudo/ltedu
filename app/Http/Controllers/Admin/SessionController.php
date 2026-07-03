@@ -49,7 +49,20 @@ class SessionController extends Controller
     {
         $session = $this->sessionService->markCompleted($id);
         return redirect()->route('admin.classes.show', $session->class_id)
-            ->with('success', 'Danh dau buoi hoc hoan thanh.');
+            ->with('success', 'Đã đánh dấu buổi học là đã học.');
+    }
+
+    public function reopen(int $id)
+    {
+        $session = $this->sessionService->reopenSession($id);
+        return redirect()->route('admin.classes.show', $session->class_id)
+            ->with('success', 'Đã mở lại buổi học.');
+    }
+
+    public function cancel(int $id)
+    {
+        $session = $this->sessionService->cancelSession($id);
+        return redirect()->route('admin.classes.show', $session->class_id)
+            ->with('success', 'Đã hủy buổi học.');
     }
 }
-

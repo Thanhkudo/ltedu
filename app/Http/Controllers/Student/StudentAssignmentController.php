@@ -44,6 +44,12 @@ class StudentAssignmentController extends Controller
 
         $student    = Student::findOrFail($studentId);
         $assignment = Assignment::with(['exercise', 'session.schoolClass'])->findOrFail($id);
+
+        if (optional($assignment->session)->status === 'cancelled') {
+            return redirect()->route('student.classes.show', $assignment->session->class_id)
+                ->with('error', __('ui.cancelled_session_note'));
+        }
+
         $submission = AssignmentSubmission::where('assignment_id', $id)
             ->where('student_id', $studentId)
             ->orderByDesc('submitted_at')
@@ -99,7 +105,13 @@ class StudentAssignmentController extends Controller
             return redirect('/')->with('error', 'Vui long nhap ma vao hoc truoc.');
         }
 
-        $assignment = Assignment::findOrFail($id);
+        $assignment = Assignment::with('session')->findOrFail($id);
+
+        if (optional($assignment->session)->status === 'cancelled') {
+            return redirect()->route('student.classes.show', $assignment->session->class_id)
+                ->with('error', __('ui.cancelled_session_note'));
+        }
+
         $questionIds = data_get($assignment->generation_config, 'question_ids', []);
 
         if (is_array($questionIds) && !empty($questionIds)) {

@@ -18,10 +18,13 @@ class ClassSession extends Model
     protected $fillable = [
         'class_id', 'session_number', 'title',
         'description', 'session_date', 'status',
+        'completed_at', 'cancelled_at',
     ];
 
     protected $casts = [
         'session_date' => 'datetime',
+        'completed_at' => 'datetime',
+        'cancelled_at' => 'datetime',
     ];
 
     //  Relations 

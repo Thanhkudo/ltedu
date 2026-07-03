@@ -38,11 +38,11 @@ class DashboardController extends Controller
         $classIds = $student->classes->pluck('id');
 
         $assignmentCount = Assignment::query()
-            ->whereHas('session', fn ($q) => $q->whereIn('class_id', $classIds))
+            ->whereHas('session', fn ($q) => $q->whereIn('class_id', $classIds)->where('status', '!=', 'cancelled'))
             ->count();
 
         $completedAssignmentCount = Assignment::query()
-            ->whereHas('session', fn ($q) => $q->whereIn('class_id', $classIds))
+            ->whereHas('session', fn ($q) => $q->whereIn('class_id', $classIds)->where('status', '!=', 'cancelled'))
             ->whereHas('submissions', fn ($q) => $q->where('student_id', $studentId))
             ->count();
 
@@ -51,7 +51,7 @@ class DashboardController extends Controller
                 'exercise',
                 'submissions' => fn ($q) => $q->where('student_id', $studentId)->latest('submitted_at'),
             ])
-            ->whereHas('session', fn ($q) => $q->whereIn('class_id', $classIds))
+            ->whereHas('session', fn ($q) => $q->whereIn('class_id', $classIds)->where('status', '!=', 'cancelled'))
             ->orderByDesc('created_at')
             ->limit(8)
             ->get();
@@ -93,5 +93,4 @@ class DashboardController extends Controller
         return redirect('/');
     }
 }
-
 

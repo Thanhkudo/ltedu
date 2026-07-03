@@ -85,6 +85,7 @@ return [
     'scheduled' => 'Sắp học',
     'completed' => 'Đã học',
     'cancelled' => 'Đã hủy',
+    'cancelled_session_note' => 'Buổi học này đã hủy, bạn không cần làm bài tập của buổi này.',
     'not_submitted' => 'Chưa nộp',
     'overdue' => 'Quá hạn',
     'graded' => 'Đã chấm: :score/:max',

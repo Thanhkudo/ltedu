@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ClassController;
 use App\Http\Controllers\Api\SessionController;
 use App\Http\Controllers\Api\ExerciseController;
 use App\Http\Controllers\Api\AssignmentController;
+use App\Http\Controllers\Api\Mobile\StudentAppController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,8 @@ Route::get('sessions/{id}', [SessionController::class, 'show']);
 Route::put('sessions/{id}', [SessionController::class, 'update']);
 Route::delete('sessions/{id}', [SessionController::class, 'destroy']);
 Route::patch('sessions/{id}/complete', [SessionController::class, 'complete']);
+Route::patch('sessions/{id}/reopen', [SessionController::class, 'reopen']);
+Route::patch('sessions/{id}/cancel', [SessionController::class, 'cancel']);
 
 //  Thu vien bai tap (Exercise Library) 
 Route::apiResource('exercises', ExerciseController::class);
@@ -47,3 +50,20 @@ Route::apiResource('assignments', AssignmentController::class)->except(['index']
 Route::post('assignments/{id}/submit', [AssignmentController::class, 'submit']);
 Route::patch('assignments/{id}/submissions/{submissionId}/grade', [AssignmentController::class, 'grade']);
 Route::get('assignments/{id}/submissions', [AssignmentController::class, 'submissions']);
+
+Route::prefix('mobile')->group(function () {
+    Route::post('login', [StudentAppController::class, 'login']);
+
+    Route::middleware('mobile.auth')->group(function () {
+        Route::post('logout', [StudentAppController::class, 'logout']);
+        Route::get('me', [StudentAppController::class, 'me']);
+        Route::get('dashboard', [StudentAppController::class, 'dashboard']);
+        Route::get('classes', [StudentAppController::class, 'classes']);
+        Route::get('classes/{classId}/sessions', [StudentAppController::class, 'sessions']);
+        Route::get('sessions/{sessionId}', [StudentAppController::class, 'sessionDetail']);
+        Route::get('assignments/{assignmentId}', [StudentAppController::class, 'assignment']);
+        Route::post('assignments/{assignmentId}/questions/{questionId}/check', [StudentAppController::class, 'checkAnswer']);
+        Route::post('assignments/{assignmentId}/submit', [StudentAppController::class, 'submitAssignment']);
+        Route::get('assignments/{assignmentId}/submissions', [StudentAppController::class, 'submissions']);
+    });
+});

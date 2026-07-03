@@ -59,6 +59,7 @@ class Kernel extends HttpKernel
         'admin.access' => \App\Http\Middleware\AdminAccess::class,
         'admin.locale' => \App\Http\Middleware\ForceAdminLocale::class,
         'admin.module' => \App\Http\Middleware\AdminModulePermission::class,
+        'mobile.auth' => \App\Http\Middleware\MobileApiAuth::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,

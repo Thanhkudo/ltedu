@@ -84,6 +84,11 @@
         padding: 18px;
         box-shadow: 0 14px 30px rgba(15, 23, 42, .06);
     }
+    .session-card.cancelled {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+        opacity: .78;
+    }
     .session-head {
         display: flex;
         justify-content: space-between;
@@ -113,6 +118,21 @@
         color: #64748b;
         font-size: .86rem;
         font-weight: 700;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 12px;
+    }
+    .session-note {
+        border-radius: 16px;
+        padding: 12px 14px;
+        margin-bottom: 12px;
+        font-size: .86rem;
+        font-weight: 800;
+    }
+    .session-note.cancelled {
+        background: #fee2e2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
     }
     .session-status {
         display: inline-flex;
@@ -305,7 +325,7 @@
 
     <div class="session-timeline">
         @forelse($class->sessions as $session)
-            <section class="session-card slide-up">
+            <section class="session-card {{ $session->status }} slide-up">
                 <div class="session-head">
                     <div>
                         <div class="session-kicker">
@@ -314,7 +334,13 @@
                         </div>
                         <div class="session-title">{{ $session->title }}</div>
                         <div class="session-meta">
-                            <i class="bi bi-clock me-1"></i>{{ $session->session_date->format('d/m/Y H:i') }}
+                            <span><i class="bi bi-clock me-1"></i>{{ $session->session_date->format('d/m/Y H:i') }}</span>
+                            @if($session->completed_at)
+                                <span class="text-success"><i class="bi bi-check2-circle me-1"></i>{{ $session->completed_at->format('d/m/Y H:i') }}</span>
+                            @endif
+                            @if($session->cancelled_at)
+                                <span class="text-danger"><i class="bi bi-x-circle me-1"></i>{{ $session->cancelled_at->format('d/m/Y H:i') }}</span>
+                            @endif
                         </div>
                     </div>
 
@@ -323,7 +349,12 @@
                     </span>
                 </div>
 
-                @if($session->assignments->isNotEmpty())
+                @if($session->status === 'cancelled')
+                    <div class="session-note cancelled">
+                        <i class="bi bi-info-circle me-1"></i>
+                        {{ __('ui.cancelled_session_note') }}
+                    </div>
+                @elseif($session->assignments->isNotEmpty())
                     <div class="assignment-grid">
                         @foreach($session->assignments as $assignment)
                             @php
