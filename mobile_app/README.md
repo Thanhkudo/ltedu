@@ -9,6 +9,7 @@ Flutter source for the LTEdu student app.
 - View classes
 - View lessons and homework
 - Open homework
+- Auth gate: if a token exists, the app opens Home directly
 - Answer question types:
   - select
   - input
@@ -16,6 +17,14 @@ Flutter source for the LTEdu student app.
   - matching
 - Check an answer
 - Submit homework
+
+## Architecture
+
+- Flutter + Riverpod
+- Dio for API calls
+- GoRouter for navigation
+- Secure storage for access token
+- Feature-first structure under `lib/features`
 
 ## API Base URL
 
@@ -47,7 +56,7 @@ flutter pub get
 flutter run
 ```
 
-If this folder was created before running `flutter create`, initialize platform folders with:
+This source currently contains the Dart app code. If Android/iOS platform folders are missing, initialize them with:
 
 ```bash
 flutter create .
